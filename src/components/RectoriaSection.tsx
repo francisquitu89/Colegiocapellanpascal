@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { useTypewriter } from '../hooks/useTypewriter';
 
 interface RectoriaSectionProps {
   onBack: () => void;
 }
 
+const TypedParagraph: React.FC<{ text: string; delay: number }> = ({ text, delay }) => {
+  const { displayedText, isComplete } = useTypewriter({ text, speed: 10, delay });
+
+  return (
+    <p>
+      {displayedText}
+      {!isComplete && <span className="ml-1 inline-block h-5 w-0.5 animate-pulse bg-[#f2c500]" />}
+    </p>
+  );
+};
+
 const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
   const [isVisible, setIsVisible] = useState(false);
   
   const rectorMessage = [
-    "Querida Comunidad del Colegio Sagrados Corazones de Manquehue:",
-    "¡Bienvenidos al año escolar 2026!",
-    "\"Ustedes son la luz del mundo\" (Mt 5,14).",
-    "Con especial alegría y emoción los saludo al iniciar este nuevo año. Para muchos será un comienzo lleno de expectativas; para otros, el cierre de una etapa significativa. Para mí, tiene un sentido muy especial, ya que asumo como rectora de un colegio que ha sido parte fundamental de mi vida.",
-    "Llegué el año 1999 como profesora de inglés, y aquí descubrí mucho más que un lugar de trabajo: una comunidad con identidad, sentido de pertenencia y una profunda vocación formativa. Inspirados en la espiritualidad de los Sagrados Corazones de Jesús y de María, entendemos la educación como un acto de amor, que busca formar personas íntegras, comprometidas y capaces de servir con generosidad.",
-    "Asumo este desafío con gratitud y responsabilidad, convencida de que el liderazgo es, ante todo, servicio. Confío plenamente en nuestra comunidad: en el compromiso de nuestros educadores, en la riqueza de nuestros estudiantes y en el rol fundamental de las familias, con quienes compartimos la misión de educar.",
-    "Seguiremos fortaleciendo nuestro proyecto educativo, poniendo a los estudiantes en el centro, promoviendo una formación integral que combine excelencia académica, desarrollo personal, innovación pedagógica y una vivencia profunda de nuestra espiritualidad. La vida pastoral, el deporte, las artes y las diversas actividades seguirán siendo espacios clave para crecer en comunidad y desarrollar talentos.",
-    "Encomendamos este año a los Sagrados Corazones de Jesús y de María, para que nos inspiren a amar, acoger y servir con alegría.",
-    "Los invito a caminar juntos, como una sola comunidad, construyendo un colegio donde cada persona se sienta valorada y llamada a aportar al bien común.",
-    "Con mucho cariño,"
+    "Habiendo transcurrido gran parte del presente año 2026 y posterior a celebrar los 34 años de existencia como colegio, tenemos la mirada puesta en el cierre del presente año para comenzar con más energía y alegría el próximo 2027.",
+    "Nuestros alumnos ya se preparan en todas las áreas para dar término a este año académico, preparando sus cierres de notas, desarrollando las actividades sociales, artísticas, deportivas y de evaluación integral en los instrumentos SIMCE, PAES e Impulso Lector 2026.",
+    "No tenemos dudas que todas estas evaluaciones les servirán a ellos para sentirse mejor preparados, como asimismo también servirán al colegio y a ustedes como apoderados, para revisar aquellas áreas donde es necesario reforzar a nuestros estudiantes.",
+    "Seguimos trabajando en los proyectos de infraestructura deportiva, especialmente en la licitación para la transformación de nuestra cancha de fútbol a pasto sintético y esperamos contar con estos nuevos espacios a contar del inicio del año escolar 2027.",
+    "Hemos iniciado el proceso de admisión 2027 y desde ya les damos la bienvenida a aquellas familias que han decidido considerar a nuestro CCP como la alternativa escolar para sus hijos e hijas.",
+    "Un afectuoso saludo,"
   ];
 
   useEffect(() => {
@@ -26,7 +34,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-red-50 to-gray-100">
+    <div className="min-h-screen bg-[#f8fafc]">
       {/* Header with back button */}
       <div className="bg-white shadow-lg">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -37,54 +45,48 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
             <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
             Volver al inicio
           </button>
-          <h1 className={`text-4xl md:text-5xl font-bold text-gray-900 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h1 className={`font-cinzel text-4xl md:text-5xl font-bold text-[#003b71] transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             Rectoría
           </h1>
         </div>
       </div>
 
-      {/* Hero Image Section */}
-      <div className={`relative h-[500px] overflow-hidden transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-        <img
-          src="https://i.postimg.cc/HkmyszS3/COLE-0026.jpg"
-          alt="Colegio Sagrados Corazones de Manquehue"
-          className="w-full h-full object-cover object-center"
-        />
-      </div>
-
       {/* Content Section */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className={`bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className={`bg-white rounded-3xl shadow-xl overflow-hidden transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            <div className="relative min-h-[28rem] lg:min-h-full">
+              <img
+                src="https://i.postimg.cc/FFJCs0mq/Foto-Rector-CCP-2026-ajustada-IA-789x1024.png"
+                alt="Ronald Baasch Barberis, rector del Colegio Capellán Pascal"
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#003b71]/70 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 text-white">
+                <p className="font-cinzel text-xl font-bold">Ronald Baasch Barberis</p>
+                <p className="text-sm text-white/85">Rector</p>
+              </div>
+            </div>
+
           <div className="p-8 md:p-12">
             {/* Rector's Message */}
-            <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-lg shadow-md p-8 border-t-4 border-blue-600">
-              <h2 className="text-2xl font-bold text-blue-900 mb-6 text-center">Mensaje de la Rectora</h2>
+            <div className="rounded-2xl border-t-4 border-[#f2c500] bg-[#f8fafc] p-6 md:p-8">
+              <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c500]">Mensaje de Rectoría</p>
+              <h2 className="font-cinzel text-3xl font-bold text-[#003b71] mb-8">Estimada comunidad<br />Colegio Capellán Pascal</h2>
 
               <div className="space-y-4 text-gray-700 leading-relaxed">
-                <div className="float-right ml-4 mb-3 mt-1 sm:ml-6 sm:mb-4">
-                  <div className="relative">
-                    <div className="absolute -top-2 -right-2 w-full h-full bg-gradient-to-br from-blue-300 to-blue-600 rounded-lg opacity-20"></div>
-                    <div className="relative w-72 h-96 sm:w-80 sm:h-[28rem] rounded-lg overflow-hidden shadow-xl border border-blue-100">
-                      <img
-                        src="https://i.postimg.cc/NfkX5tV7/Whats-App-Image-2026-03-16-at-15-42-42.jpg"
-                        alt="Rectoria Colegio Sagrados Corazones de Manquehue"
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 {rectorMessage.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
+                  <TypedParagraph key={paragraph} text={paragraph} delay={index * 900} />
                 ))}
 
-                <div className="clear-both pt-5 mt-6 border-t border-blue-200 text-center lg:text-left">
-                  <p className="text-xl font-bold text-blue-900">Sandra Duran Vega</p>
-                  <p className="text-gray-600 italic">Rectora</p>
-                  <p className="text-gray-700">Colegio Sagrados Corazones de Manquehue</p>
+                <div className="pt-5 mt-6 border-t border-[#003b71]/15">
+                  <p className="text-xl font-bold text-[#003b71]">Ronald Baasch Barberis</p>
+                  <p className="text-gray-600 italic">Rector</p>
+                  <p className="text-gray-700">Colegio Capellán Pascal</p>
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
