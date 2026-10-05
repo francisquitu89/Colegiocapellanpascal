@@ -113,6 +113,10 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
                   alt="Ronald Baasch Barberis, rector del Colegio Capellán Pascal"
                   className="block h-auto max-h-[52rem] min-h-[28rem] w-full object-cover object-top lg:h-full"
                 />
+                <div className="px-6 py-5 text-white md:px-8">
+                  <p className="font-cinzel text-xl font-bold">Ronald Baasch Barberis</p>
+                  <p className="mt-1 text-sm italic text-white/75">Rector</p>
+                </div>
               </div>
               <div className="p-6 md:p-10 lg:p-14">
                 <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c500]">Mensaje de Rectoría</p>
@@ -123,11 +127,6 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
                   {rectorMessage.map((paragraph, index) => (
                     <TypedParagraph key={paragraph} text={paragraph} delay={index * 900} />
                   ))}
-                  <div className="pt-5 mt-6 border-t border-[#003b71]/15">
-                    <p className="text-xl font-bold text-[#003b71]">Ronald Baasch Barberis</p>
-                    <p className="text-gray-600 italic">Rector</p>
-                    <p className="text-gray-700">Colegio Capellán Pascal</p>
-                  </div>
                 </div>
               </div>
             </div>

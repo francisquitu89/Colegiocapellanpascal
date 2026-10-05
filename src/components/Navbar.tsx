@@ -15,6 +15,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
   const [mobileAdmisionOpen, setMobileAdmisionOpen] = useState(false);
   const [mobileCalendariosOpen, setMobileCalendariosOpen] = useState(false);
   const [logoUrl, setLogoUrl] = useState<string>('');
+  const [openSection, setOpenSection] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -30,7 +31,31 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
     setIsMenuOpen(false);
     setIsOurOpen(false);
     setIsAdmisionOpen(false);
+    setOpenSection(null);
   };
+
+  const renderDesktopSection = (label: string, items: Array<{ label: string; page: string }>) => (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpenSection(label)}
+      onMouseLeave={() => setOpenSection(null)}
+    >
+      <button className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">
+        {label}
+      </button>
+      <div className={`absolute left-0 top-full w-64 bg-[#003b71] border border-[#f2c500] rounded-lg shadow-lg py-2 z-[9999] transition-all duration-150 ${openSection === label ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
+        <ul className="space-y-1 px-2">
+          {items.map((item) => (
+            <li key={item.label}>
+              <button onClick={() => handleNavigation(item.page)} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
+                {item.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 shadow-md">
@@ -122,6 +147,9 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
 
             {/* CENTER: DESKTOP MAIN MENU */}
             <div className="hidden xl:flex shrink-0 items-center space-x-5 2xl:space-x-7 ml-auto pl-6 2xl:pl-10">
+              <button onClick={() => handleNavigation('home')} className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">
+                Inicio
+              </button>
               
               {/* NUESTRO COLEGIO - Dropdown */}
               <div className="relative group">
@@ -184,6 +212,37 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                     </li>
                   </ul>
                 </div>
+
+                {renderDesktopSection('Área de Formación', [
+                  { label: 'Equipos de Formación', page: 'vicerrectoria-formacion' },
+                  { label: 'Pastoral Juvenil', page: 'pastoral-juvenil' },
+                  { label: 'Psicorientación', page: 'departamento-orientacion' },
+                  { label: 'Convivencia Escolar', page: 'comunidad' },
+                ])}
+
+                {renderDesktopSection('Área Académica', [
+                  { label: 'Equipo Académico', page: 'cultura-pensamiento' },
+                  { label: 'Innovación Pedagógica', page: 'cultura-pensamiento' },
+                  { label: 'ACLE', page: 'acles' },
+                  { label: 'Biblioteca', page: 'biblioteca' },
+                  { label: 'Calendario de Evaluaciones', page: 'calendario-primer-ciclo' },
+                  { label: 'Programa de Intercambio Estudiantil 2027', page: 'recursos-digitales' },
+                ])}
+
+                {renderDesktopSection('Comunidad Educativa', [
+                  { label: 'CEAL', page: 'ceal' },
+                  { label: 'Pastoral Juvenil', page: 'pastoral-juvenil' },
+                  { label: 'Uniforme', page: 'uniformes-escolares' },
+                  { label: 'Lista de útiles', page: 'utiles-escolares' },
+                  { label: 'Casino', page: 'casino-management' },
+                ])}
+
+                {renderDesktopSection('Documentación', [
+                  { label: 'Proyecto Educativo Institucional', page: 'proyecto-educativo' },
+                  { label: 'Documentos Oficiales', page: 'documentos-institucionales' },
+                  { label: 'Plan Lector', page: 'plan-lector' },
+                  { label: 'Reglamentos', page: 'institutional-documents' },
+                ])}
               </div>
 
               {/* Other Main Menu Items */}
@@ -265,6 +324,9 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   </ul>
                 </div>
               </div>
+              <a href="https://colegiocapellanpascal.cl/blog/" target="_blank" rel="noopener noreferrer" className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">Blog</a>
+              <a href="https://colegiocapellanpascal.cl/galeria/" target="_blank" rel="noopener noreferrer" className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">Galería</a>
+              <a href="https://colegiocapellanpascal.cl/contacto/" target="_blank" rel="noopener noreferrer" className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">Contacto</a>
             </div>
 
             {/* RIGHT: MOBILE MENU TOGGLE */}
@@ -323,6 +385,23 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                     </button>
                   </div>
                 )}
+              </div>
+
+              <div className="border-t pt-2">
+                <p className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-[#003b71]">Áreas del colegio</p>
+                {[
+                  ['Área de Formación', 'vicerrectoria-formacion'],
+                  ['Área Académica', 'cultura-pensamiento'],
+                  ['Comunidad Educativa', 'comunidad'],
+                  ['Documentación', 'documentos-institucionales'],
+                ].map(([label, page]) => (
+                  <button key={label} onClick={() => handleNavigation(page)} className="block w-full rounded px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-blue-50">
+                    {label}
+                  </button>
+                ))}
+                <a href="https://colegiocapellanpascal.cl/blog/" target="_blank" rel="noopener noreferrer" className="block rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50">Blog</a>
+                <a href="https://colegiocapellanpascal.cl/galeria/" target="_blank" rel="noopener noreferrer" className="block rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50">Galería</a>
+                <a href="https://colegiocapellanpascal.cl/contacto/" target="_blank" rel="noopener noreferrer" className="block rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50">Contacto</a>
               </div>
 
               {/* Tour Virtual */}

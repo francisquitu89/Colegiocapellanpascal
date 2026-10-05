@@ -14,8 +14,16 @@ const MapSection: React.FC = () => {
             Visítanos
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Encuéntranos en 2F44+66 Viña del Mar, Chile; Población Naval Allard, Las Salinas, Viña del Mar, Valparaíso, Chile.
+            Encuéntranos en Población Naval Allard, Las Salinas, Viña del Mar, Valparaíso, Chile.
           </p>
+          <a
+            href="https://www.google.com/maps/dir/?api=1&destination=-32.994444791852374,-71.54442484365642"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center rounded-md bg-[#003b71] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#f2c500] hover:text-[#003b71]"
+          >
+            Cómo llegar
+          </a>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
