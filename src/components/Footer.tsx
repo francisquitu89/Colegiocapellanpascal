@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-  <footer className="bg-blue-900 text-white py-12">
+  <footer className="bg-[#003b71] text-white py-12 border-t-4 border-[#f2c500]">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div className="flex flex-col items-center space-y-8">
         <div className="flex items-center justify-center space-x-8 flex-wrap">
@@ -44,20 +44,20 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="text-center">
-          <p className="text-blue-200 text-sm md:text-base font-medium">
+          <p className="text-blue-100 text-sm md:text-base font-medium">
             Colegio Capellán Pascal | Copyright ® 1992 - 2026 | Política de Privacidad
           </p>
         </div>
 
         <div className="text-center text-blue-100 text-sm mt-2">
-          <p>Viña del Mar, Valparaíso, Chile</p>
+          <p>Guardiamarina Riquelme s/n, Población Allard, Las Salinas, Viña del Mar</p>
           <p className="mt-1">+56 32 2546520 · contactoweb@capellanpascal.cl</p>
         </div>
       </div>
 
-      <div className="mt-8 pt-8 border-t border-red-700">
+      <div className="mt-8 pt-8 border-t border-[#f2c500]/50">
         <div className="flex items-center justify-between">
-          <div className="text-red-200 text-xs text-center w-full">
+          <div className="text-blue-100 text-xs text-center w-full">
             <p>Sitio web desarrollado por Tourify.cl</p>
           </div>
           <div className="text-right w-full">

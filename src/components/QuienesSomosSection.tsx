@@ -3,10 +3,10 @@ import { useTypewriter } from '../hooks/useTypewriter';
 
 const QuienesSomosSection: React.FC = () => {
 
-  const paragraph1 = "Somos el Colegio Sagrados Corazones Manquehue, una comunidad educativa católica perteneciente a la Congregación de los Sagrados Corazones, que forma personas íntegras desde una educación de excelencia, inspirada en el Evangelio y en la espiritualidad de los Sagrados Corazones de Jesús y de María.";
+  const paragraph1 = "Somos el Colegio Capellán Pascal, una comunidad educativa católica de Viña del Mar que forma personas íntegras desde una educación de excelencia, inspirada en el Evangelio y en la espiritualidad de los Sagrados Corazones.";
   const paragraph2 = "Educamos en comunidad, poniendo a la persona en el centro del proceso formativo y promoviendo el desarrollo académico, humano, espiritual, social y físico de nuestros estudiantes. Creemos en una educación que acoge la diversidad, fomenta el pensamiento crítico y acompaña a cada estudiante en su crecimiento personal y vocacional.";
   const paragraph3 = "Nuestro proyecto educativo se sustenta en valores como la fraternidad, el respeto, la solidaridad y el compromiso con los demás, formando hombres y mujeres conscientes, competentes y comprometidos con la construcción de una sociedad más justa y fraterna.";
-  const paragraph4 = "El Colegio SS.CC. Manquehue es un espacio de encuentro, aprendizaje y vida, donde la educación y la fe se integran para dar sentido a la formación de cada estudiante.";
+  const paragraph4 = "El Colegio Capellán Pascal es un espacio de encuentro, aprendizaje y vida, donde la educación y la fe se integran para dar sentido a la formación de cada estudiante.";
 
   const { displayedText: text1, isComplete: complete1 } = useTypewriter({ 
     text: paragraph1, 
@@ -33,16 +33,16 @@ const QuienesSomosSection: React.FC = () => {
   });
 
   return (
-    <section id="quienes-somos-section" className="py-16 bg-white">
+    <section id="quienes-somos-section" className="py-16 bg-[#f8fafc]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           {/* Left Content */}
           <div className="space-y-6">
             <div className="flex items-center space-x-2 font-medium" style={{color: '#2563EB'}}>
-              <div className="w-8 h-0.5" style={{backgroundColor: '#2563EB'}}></div>
+              <div className="w-8 h-0.5 bg-[#f2c500]"></div>
               <span>Quiénes Somos</span>
             </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-blue-900 leading-tight">
+            <h2 className="font-cinzel text-3xl lg:text-4xl font-bold text-[#003b71] leading-tight">
               ¿Quiénes somos?
             </h2>
             
@@ -80,12 +80,12 @@ const QuienesSomosSection: React.FC = () => {
           <div className="relative">
             <div className="relative">
               {/* Decorative blue square background */}
-              <div className="absolute -top-6 -right-6 w-96 h-96 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg opacity-20"></div>
+              <div className="absolute -top-6 -right-6 w-96 h-96 bg-gradient-to-br from-[#003b71] to-[#f2c500] rounded-lg opacity-20"></div>
               {/* Main image with square shape */}
               <div className="relative w-96 h-96 mx-auto rounded-lg overflow-hidden shadow-2xl">
                 <img
                   src="https://i.postimg.cc/vH3y23Z4/fotodecomida2.jpg"
-                  alt="Colegio Sagrados Corazones de Manquehue"
+                  alt="Colegio Capellán Pascal"
                   className="w-full h-full object-cover object-center scale-110"
                 />
               </div>

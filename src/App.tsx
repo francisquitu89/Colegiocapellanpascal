@@ -592,7 +592,7 @@ function App() {
         {/* Hero Section */}
         <main className="px-8 md:px-12 lg:px-16">
           <div className="text-left max-w-4xl">
-            <h1 className="text-white text-xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight tracking-wide drop-shadow-lg">
+            <h1 className="font-cinzel text-white text-xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight tracking-wide drop-shadow-lg">
               COLEGIO CAPELLÁN PASCAL<br />DIOS, PATRIA Y FAMILIA
             </h1>
             
@@ -650,7 +650,7 @@ function App() {
 
       {/* Editorial Section removed */}
 
-      {/* 360 Tour Section */}
+      {/* Tour 360° del Colegio Capellán Pascal */}
       <div id="tour-virtual-section">
         <Tour360Section />
       </div>

@@ -14,8 +14,7 @@ const MapSection: React.FC = () => {
             Visítanos
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Estamos ubicados en Padre Damián de Veuster 2151, Vitacura, Región Metropolitana, 
-            en un ambiente natural que favorece el aprendizaje y la formación integral.
+            Encuéntranos en Guardiamarina Riquelme s/n, Población Allard, Las Salinas, Viña del Mar, Región de Valparaíso.
           </p>
         </div>
 
@@ -29,7 +28,7 @@ const MapSection: React.FC = () => {
             <div className="mx-auto max-w-4xl rounded-lg overflow-hidden shadow-lg">
               <div className="relative" style={{ paddingTop: '60%' }}>
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!4v1759096045152!6m8!1m7!1sZHZJ1tAt_3DzDavSVMnIjA!2m2!1d-33.37954734574453!2d-70.55154355390484!3f67.47583125443603!4f4.631081243600818!5f0.7820865974627469"
+                  src="https://www.google.com/maps?q=Guardiamarina%20Riquelme%20s%2Fn%2C%20Las%20Salinas%2C%20Vi%C3%B1a%20del%20Mar&output=embed"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
@@ -49,7 +48,7 @@ const MapSection: React.FC = () => {
             <div className="mx-auto max-w-4xl rounded-lg overflow-hidden shadow-lg">
               <div className="relative" style={{ paddingTop: '60%' }}>
                 <iframe
-                  src="https://maps.google.com/maps?q=-33.37954734574453,-70.55154355390484&z=18&output=embed&t=k"
+                  src="https://maps.google.com/maps?q=-32.963647,-71.544239&z=18&output=embed&t=k"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
