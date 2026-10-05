@@ -212,6 +212,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                     </li>
                   </ul>
                 </div>
+              </div>
 
                 {renderDesktopSection('Área de Formación', [
                   { label: 'Equipos de Formación', page: 'vicerrectoria-formacion' },
@@ -243,7 +244,6 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   { label: 'Plan Lector', page: 'plan-lector' },
                   { label: 'Reglamentos', page: 'institutional-documents' },
                 ])}
-              </div>
 
               {/* Other Main Menu Items */}
               <button 
@@ -256,7 +256,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   }
                   setIsMenuOpen(false);
                 }}
-                className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
+                className="hidden text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
               >
                 Tour Virtual
               </button>
@@ -289,8 +289,17 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   </ul>
                 </div>
               </div>
+              {renderDesktopSection('Servicios', [
+                { label: 'Tour Virtual', page: 'tour-virtual' },
+                { label: 'Calendario Primer Ciclo', page: 'calendario-primer-ciclo' },
+                { label: 'Calendario Segundo Ciclo', page: 'calendario-segundo-ciclo' },
+                { label: 'Calendario Tercer Ciclo', page: 'calendario-tercer-ciclo' },
+                { label: 'Blog', page: 'news-management' },
+                { label: 'Galería', page: 'comunidad' },
+                { label: 'Contacto', page: 'comunidad' },
+              ])}
               {/* CALENDARIOS - Dropdown */}
-              <div className="relative group">
+              <div className="relative group hidden">
                 <button
                   className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
                   onMouseEnter={() => setCalendarsOpen(true)}
@@ -324,9 +333,6 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   </ul>
                 </div>
               </div>
-              <a href="https://colegiocapellanpascal.cl/blog/" target="_blank" rel="noopener noreferrer" className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">Blog</a>
-              <a href="https://colegiocapellanpascal.cl/galeria/" target="_blank" rel="noopener noreferrer" className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">Galería</a>
-              <a href="https://colegiocapellanpascal.cl/contacto/" target="_blank" rel="noopener noreferrer" className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">Contacto</a>
             </div>
 
             {/* RIGHT: MOBILE MENU TOGGLE */}
