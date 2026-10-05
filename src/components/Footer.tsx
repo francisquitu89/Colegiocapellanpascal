@@ -28,7 +28,8 @@ const Footer: React.FC = () => {
   };
 
   return (
-  <footer className="bg-[#003b71] text-white py-12 border-t-4 border-[#f2c500]">
+  <footer className="relative overflow-hidden bg-[#f8fafc] py-12 text-[#003b71] border-t-4 border-[#f2c500]">
+    <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#003b71_0%,#003b71_33%,#f2c500_33%,#f2c500_66%,#003b71_66%,#003b71_100%)]" aria-hidden="true" />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div className="flex flex-col items-center space-y-8">
         <div className="flex items-center justify-center space-x-8 flex-wrap">
@@ -44,27 +45,27 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="text-center">
-          <p className="text-blue-100 text-sm md:text-base font-medium">
+          <p className="text-[#003b71] text-sm md:text-base font-semibold">
             Colegio Capellán Pascal | Copyright ® 1992 - 2026 | Política de Privacidad
           </p>
         </div>
 
-        <div className="text-center text-blue-100 text-sm mt-2">
+        <div className="text-center text-[#49627b] text-sm mt-2">
           <p>Guardiamarina Riquelme s/n, Población Allard, Las Salinas, Viña del Mar</p>
           <p className="mt-1">+56 32 2546520 · contactoweb@capellanpascal.cl</p>
         </div>
       </div>
 
-      <div className="mt-8 pt-8 border-t border-[#f2c500]/50">
+      <div className="mt-8 pt-8 border-t border-[#003b71]/15">
         <div className="flex items-center justify-between">
-          <div className="text-blue-100 text-xs text-center w-full">
+          <div className="text-[#49627b] text-xs text-center w-full">
             <p>Sitio web desarrollado por Tourify.cl</p>
           </div>
           <div className="text-right w-full">
             <button
               aria-label="Admin"
               onClick={goAdmin}
-              className="inline-block text-white/60 hover:text-white text-xs px-3 py-1 border border-white/30 hover:border-white rounded transition-colors"
+              className="inline-block text-[#003b71]/60 hover:text-[#003b71] text-xs px-3 py-1 border border-[#003b71]/30 hover:border-[#003b71] rounded transition-colors"
             >
               Admin
             </button>
