@@ -70,7 +70,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
     return (
       <>
         <section ref={sectionRef} className="relative z-20 h-screen w-full overflow-hidden bg-[#001d38]">
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden" style={{ clipPath: 'inset(0px)' }}>
             <img
               src="https://i.postimg.cc/9fdTnFj1/Discurso-solemne-en-el-colegio.png"
               alt="Discurso solemne en el Colegio Capellán Pascal"
