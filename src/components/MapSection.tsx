@@ -14,7 +14,7 @@ const MapSection: React.FC = () => {
             Visítanos
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Encuéntranos en Guardiamarina Riquelme s/n, Población Allard, Las Salinas, Viña del Mar, Región de Valparaíso.
+            Encuéntranos en 2F44+66 Viña del Mar, Chile; Población Naval Allard, Las Salinas, Viña del Mar, Valparaíso, Chile.
           </p>
         </div>
 
@@ -48,7 +48,7 @@ const MapSection: React.FC = () => {
             <div className="mx-auto max-w-4xl rounded-lg overflow-hidden shadow-lg">
               <div className="relative" style={{ paddingTop: '60%' }}>
                 <iframe
-                  src="https://maps.google.com/maps?q=-32.963647,-71.544239&z=18&output=embed&t=k"
+                  src="https://maps.google.com/maps?q=2F44%2B66%20Vi%C3%B1a%20del%20Mar%2C%20Chile%3B%20Poblaci%C3%B3n%20Naval%20Allard%2C%20Las%20Salinas%2C%20Vi%C3%B1a%20del%20Mar%2C%20Valpara%C3%ADso%2C%20Chile&z=18&output=embed&t=k"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
