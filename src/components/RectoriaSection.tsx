@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useTypewriter } from '../hooks/useTypewriter';
 
 interface RectoriaSectionProps {
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 const TypedParagraph: React.FC<{ text: string; delay: number }> = ({ text, delay }) => {
@@ -36,7 +36,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Header with back button */}
-      <div className="bg-white shadow-lg">
+      {onBack && <div className="bg-white shadow-lg">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <button
             onClick={onBack}
@@ -49,7 +49,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
             Rectoría
           </h1>
         </div>
-      </div>
+      </div>}
 
       {/* Content Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">

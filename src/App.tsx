@@ -53,7 +53,6 @@ import StorageOptimizer from './components/StorageOptimizer';
 import MapSection from './components/MapSection';
 import Footer from './components/Footer';
 import QuickAccessWheel from './components/QuickAccessWheel';
-import QuienesSomosSection from './components/QuienesSomosSection';
 import PlanLectorSection from './components/PlanLectorSection';
 import PlanLectorManagement from './components/PlanLectorManagement';
 import DirectorioFundacionManagement from './components/DirectorioFundacionManagement';
@@ -642,8 +641,8 @@ function App() {
       {/* Accesos rápidos flotantes para la comunidad escolar */}
       <QuickAccessWheel />
 
-      {/* Quiénes Somos Section */}
-      <QuienesSomosSection />
+      {/* Mensaje de Rectoría */}
+      <RectoriaSection />
 
       {/* News Section */}
       <NewsSection />
