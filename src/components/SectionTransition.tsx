@@ -50,7 +50,7 @@ const SectionTransition: React.FC<SectionTransitionProps> = ({ imageUrl, alt, ey
             left: 0,
             width: '100%',
             height: '100vh',
-            transform: `scale(1.06) translateY(${parallaxOffset}px)`,
+            transform: `translateY(${parallaxOffset}px)`,
           }}
         />
       </div>

@@ -647,7 +647,7 @@ function App() {
 
       {/* Transición cinematográfica hacia Noticias */}
       <SectionTransition
-        imageUrl="https://i.postimg.cc/vTQ7XvdJ/Aniversario-CCP-2024-37-copia-1024x683.webp"
+        imageUrl="https://i.postimg.cc/vTQ7XvdJ/Aniversario-CCP-2024-37-copia.webp"
         alt="Aniversario del Colegio Capellán Pascal"
         eyebrow="Vida de nuestra comunidad"
         title="Noticias y momentos que nos unen"

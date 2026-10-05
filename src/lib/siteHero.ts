@@ -7,7 +7,7 @@ export const HOME_HERO_DEFAULT_IMAGES = [
   'https://i.postimg.cc/TfmjSLLf/Fotos-colegia-219.webp?dl=1',
   'https://i.postimg.cc/fbTHTZP9/Foto-1-Alumnos-de-diferenciado-IV-Comprension-historica-del-presente-Explicacion-a-del-Combate-N.jpg',
   'https://i.postimg.cc/dtfQ9t28/LITURGIA-DE-CENIZAS-scaled.jpg',
-  'https://i.postimg.cc/vTQ7XvdJ/Aniversario-CCP-2024-37-copia-1024x683.webp'
+  'https://i.postimg.cc/vTQ7XvdJ/Aniversario-CCP-2024-37-copia.webp'
 ];
 const HOME_HERO_LOCAL_STORAGE_KEY = 'site-home-hero-base-images';
 
