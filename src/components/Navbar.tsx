@@ -116,7 +116,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                     aria-hidden="true"
                   />
                 )}
-                <span className="font-cinzel max-w-[12rem] sm:max-w-none text-base sm:text-xl md:text-2xl lg:text-3xl font-bold uppercase tracking-[0.06em] leading-tight text-[#003b71]">
+                <span className="font-cinzel whitespace-nowrap text-sm sm:text-xl md:text-2xl lg:text-3xl font-bold uppercase tracking-[0.04em] leading-tight text-[#003b71]">
                   Colegio Capellán Pascal
                 </span>
               </button>
