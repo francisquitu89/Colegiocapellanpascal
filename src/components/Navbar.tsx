@@ -94,7 +94,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
       {/* MAIN THICK BAR - White background with logo and navigation */}
       <nav className="w-full bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-36 relative">
+          <div className="flex items-center justify-between h-20 relative overflow-visible">
 
             {/* LEFT: LOGO */}
             <div className="flex items-center">
