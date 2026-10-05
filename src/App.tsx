@@ -647,8 +647,8 @@ function App() {
 
       {/* Transición cinematográfica hacia Noticias */}
       <SectionTransition
-        imageUrl="https://i.postimg.cc/X75PxmvL/BENDICION-DE-CORBATAS-1024x683.jpg"
-        alt="Bendición de corbatas del Colegio Capellán Pascal"
+        imageUrl="https://i.postimg.cc/vTQ7XvdJ/Aniversario-CCP-2024-37-copia-1024x683.webp"
+        alt="Aniversario del Colegio Capellán Pascal"
         eyebrow="Vida de nuestra comunidad"
         title="Noticias y momentos que nos unen"
       />
