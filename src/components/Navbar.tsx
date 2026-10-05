@@ -118,16 +118,16 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
       <nav className="relative w-full overflow-visible border-b-4 border-[#003b71] bg-white">
         <div className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#003b71_0%,#003b71_33%,#f2c500_33%,#f2c500_66%,#003b71_66%,#003b71_100%)] pointer-events-none" aria-hidden="true" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 relative overflow-visible">
+          <div className="relative h-24 overflow-visible">
 
             {/* LEFT: LOGO */}
-            <div className="flex items-center shrink-0">
+            <div className="absolute left-0 top-0 flex items-center shrink-0">
               <button type="button" onClick={() => handleNavigation('home')} aria-label="Inicio" className="flex items-center gap-1 sm:gap-2 mt-4 relative z-30 text-left">
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt="Colegio Capellán Pascal logo"
-                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72 shrink-0 object-contain drop-shadow-lg"
+                    className="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 lg:h-52 lg:w-52 2xl:h-56 2xl:w-56 shrink-0 object-contain drop-shadow-lg"
                     onError={(e) => {
                       // If logo fails to load, hide it
                       e.currentTarget.style.display = 'none';
@@ -135,7 +135,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   />
                 ) : (
                   <div
-                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72 shrink-0"
+                    className="h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48 lg:h-52 lg:w-52 2xl:h-56 2xl:w-56 shrink-0"
                     aria-hidden="true"
                   />
                 )}
@@ -146,7 +146,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
             </div>
 
             {/* CENTER: DESKTOP MAIN MENU */}
-            <div className="hidden xl:flex shrink-0 items-center space-x-5 2xl:space-x-7 ml-auto pl-6 2xl:pl-10">
+            <div className="hidden xl:flex absolute bottom-2 left-0 right-0 items-center justify-end gap-6 border-t border-[#003b71]/10 pt-2 2xl:gap-8">
               <button onClick={() => handleNavigation('home')} className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors">
                 Inicio
               </button>
@@ -171,43 +171,38 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                 >
                   <ul className="space-y-1 px-2">
                     <li>
-                      <button onClick={() => handleNavigation('historia-congregacion')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
-                        Historia Congregación
-                      </button>
-                    </li>
-                    <li>
                       <button onClick={() => handleNavigation('historia-colegio')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Historia del Colegio
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('directorio-fundacion')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
-                        Directorio Fundación
-                      </button>
-                    </li>
-                    <li>
-                      <button onClick={() => handleNavigation('documentos-institucionales')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
-                        Documentos Oficiales
-                      </button>
-                    </li>
-                    <li>
                       <button onClick={() => handleNavigation('rectoria')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
-                        Rectoría
+                        Saludo del Rector
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('proyecto-educativo')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
-                        Proyecto Educativo
-                      </button>
-                    </li>
-                    <li>
-                      <button onClick={() => handleNavigation('consejo-directivo')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
-                        Consejo Directivo
+                      <button onClick={() => handleNavigation('vision-mision')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
+                        Misión y Visión
                       </button>
                     </li>
                     <li>
                       <button onClick={() => handleNavigation('valores')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
-                        Matrícula y colegiaturas 2026
+                        Valores
+                      </button>
+                    </li>
+                    <li>
+                      <button onClick={() => handleNavigation('historia-colegio')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
+                        Historia
+                      </button>
+                    </li>
+                    <li>
+                      <button onClick={() => handleNavigation('comunidad')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
+                        Equipo
+                      </button>
+                    </li>
+                    <li>
+                      <button onClick={() => handleNavigation('historia-colegio')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
+                        Infraestructura
                       </button>
                     </li>
                   </ul>
@@ -365,29 +360,20 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                 </button>
                 {mobileNuestroColegioOpen && (
                   <div className="pl-4 border-l ml-2">
-                    <button onClick={() => handleNavigation('historia-congregacion')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Historia Congregación
-                    </button>
                     <button onClick={() => handleNavigation('historia-colegio')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Historia del Colegio
-                    </button>
-                    <button onClick={() => handleNavigation('directorio-fundacion')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Directorio Fundación
-                    </button>
-                    <button onClick={() => handleNavigation('documentos-institucionales')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Documentos Oficiales
+                      Historia
                     </button>
                     <button onClick={() => handleNavigation('rectoria')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Rectoría
+                      Saludo del Rector
                     </button>
-                    <button onClick={() => handleNavigation('proyecto-educativo')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Proyecto Educativo
-                    </button>
-                    <button onClick={() => handleNavigation('consejo-directivo')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Consejo Directivo
+                    <button onClick={() => handleNavigation('vision-mision')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
+                      Misión y Visión
                     </button>
                     <button onClick={() => handleNavigation('valores')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
-                      Matrícula y colegiaturas 2026
+                      Valores
+                    </button>
+                    <button onClick={() => handleNavigation('comunidad')} className="block w-full text-left px-3 py-2 rounded hover:bg-blue-50 text-sm font-medium text-gray-700">
+                      Equipo
                     </button>
                   </div>
                 )}
