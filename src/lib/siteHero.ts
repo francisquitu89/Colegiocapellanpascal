@@ -3,6 +3,11 @@ import { driveRoutesSupabase } from './supabase';
 export const HOME_HERO_BUCKET = 'site-logos';
 export const HOME_HERO_FILENAME = 'site-home-hero';
 export const HOME_HERO_UPDATED_EVENT = 'site-hero-updated';
+const REMOVED_HERO_IMAGES = new Set([
+  'https://i.postimg.cc/ykGNws5m/Fotos-colegia-219.webp',
+  'https://i.postimg.cc/w7rBSgP2/Fotos-colegia-55-1024x768.webp',
+  'https://i.postimg.cc/Why4QTKn/IV-A-2.webp',
+]);
 export const HOME_HERO_DEFAULT_IMAGES = [
   'https://i.postimg.cc/4N3HzXdH/mjsscc.jpg',
   'https://i.postimg.cc/sg7jWLpM/hbasquetsscc.jpg',
@@ -28,6 +33,7 @@ const normalizeHeroImages = (images: string[]): string[] => {
       images
         .map((value) => value.trim())
         .filter(Boolean)
+        .filter((value) => !REMOVED_HERO_IMAGES.has(value))
     )
   );
 };

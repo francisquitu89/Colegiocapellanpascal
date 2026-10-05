@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 shadow-md">
       {/* TOP THIN BAR - Dark background with contact info */}
-      <div className="w-full bg-[#0b2540] border-b border-[#08304a] relative z-20">
+      <div className="w-full bg-[#003b71] border-b-4 border-[#f2c500] relative z-20">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 lg:pl-48">
           <div className="flex items-center justify-between h-12 text-sm text-white overflow-x-auto">
             
@@ -139,7 +139,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
 
                 {/* Dropdown Menu */}
                 <div
-                  className={`absolute left-0 top-full w-64 bg-[#0b2540] border border-[#08304a] rounded-lg shadow-lg py-2 z-[9999] transition-all duration-150 ${
+                  className={`absolute left-0 top-full w-64 bg-[#003b71] border border-[#f2c500] rounded-lg shadow-lg py-2 z-[9999] transition-all duration-150 ${
                     isOurOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                   }`}
                   onMouseEnter={() => setIsOurOpen(true)}
@@ -147,42 +147,42 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                 >
                   <ul className="space-y-1 px-2">
                     <li>
-                      <button onClick={() => handleNavigation('historia-congregacion')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('historia-congregacion')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Historia Congregación
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('historia-colegio')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('historia-colegio')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Historia del Colegio
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('directorio-fundacion')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('directorio-fundacion')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Directorio Fundación
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('documentos-institucionales')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('documentos-institucionales')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Documentos Oficiales
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('rectoria')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('rectoria')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Rectoría
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('proyecto-educativo')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('proyecto-educativo')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Proyecto Educativo
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('consejo-directivo')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('consejo-directivo')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Consejo Directivo
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('valores')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('valores')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Matrícula y colegiaturas 2026
                       </button>
                     </li>
@@ -216,18 +216,18 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                 </button>
                 {/* Dropdown Menu */}
                 <div
-                  className={`absolute left-0 top-full w-64 bg-[#0b2540] border border-[#08304a] rounded-lg shadow-lg py-2 z-[9999] transition-all duration-150 ${isAdmisionOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
+                  className={`absolute left-0 top-full w-64 bg-[#003b71] border border-[#f2c500] rounded-lg shadow-lg py-2 z-[9999] transition-all duration-150 ${isAdmisionOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}
                   onMouseEnter={() => setIsAdmisionOpen(true)}
                   onMouseLeave={() => setIsAdmisionOpen(false)}
                 >
                   <ul className="space-y-1 px-2">
                     <li>
-                      <button onClick={() => handleNavigation('admision-prekinder')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('admision-prekinder')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Admisión Pre Kínder
                       </button>
                     </li>
                     <li>
-                      <button onClick={() => handleNavigation('admision-kinder-ii')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-blue-700 transition-colors">
+                      <button onClick={() => handleNavigation('admision-kinder-ii')} className="w-full text-left px-3 py-2 text-xs text-white rounded hover:bg-[#f2c500] hover:text-[#003b71] transition-colors">
                         Admisión Kínder a I medio
                       </button>
                     </li>
@@ -244,7 +244,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   Calendarios
                 </button>
                 <div
-                  className={`absolute left-0 top-full w-64 bg-[#0b2540] border border-[#08304a] rounded-lg shadow-lg py-2 z-[9999] transition-all duration-150 ${
+                  className={`absolute left-0 top-full w-64 bg-[#003b71] border border-[#f2c500] rounded-lg shadow-lg py-2 z-[9999] transition-all duration-150 ${
                     calendarsOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
                   }`}
                   onMouseEnter={() => setCalendarsOpen(true)}
