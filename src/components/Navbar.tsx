@@ -121,7 +121,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
           <div className="relative h-24 overflow-visible">
 
             {/* LEFT: LOGO */}
-            <div className="absolute left-0 top-0 flex items-center shrink-0">
+            <div className="absolute left-0 top-[-1.25rem] flex items-center shrink-0 lg:left-[-1rem]">
               <button type="button" onClick={() => handleNavigation('home')} aria-label="Inicio" className="flex items-center gap-1 sm:gap-2 mt-4 relative z-30 text-left">
                 {logoUrl ? (
                   <img
@@ -139,11 +139,14 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                     aria-hidden="true"
                   />
                 )}
-                <span className="font-cinzel shrink-0 whitespace-nowrap text-sm sm:text-xl md:text-2xl lg:text-2xl 2xl:text-3xl font-bold uppercase tracking-[0.04em] leading-tight text-[#003b71]">
+                <span className="font-cinzel shrink-0 whitespace-nowrap text-sm font-bold uppercase tracking-[0.04em] leading-tight text-[#003b71] xl:hidden">
                   Colegio Capellán Pascal
                 </span>
               </button>
             </div>
+            <span className="pointer-events-none absolute left-1/2 top-2 hidden -translate-x-1/2 whitespace-nowrap font-cinzel text-2xl font-bold uppercase tracking-[0.04em] leading-tight text-[#003b71] xl:block 2xl:text-3xl">
+              Colegio Capellán Pascal
+            </span>
 
             {/* CENTER: DESKTOP MAIN MENU */}
             <div className="hidden xl:flex absolute bottom-2 left-0 right-0 items-center justify-end gap-6 border-t border-[#003b71]/10 pt-2 2xl:gap-8">
