@@ -52,7 +52,7 @@ import LogoManagement from './components/LogoManagement';
 import StorageOptimizer from './components/StorageOptimizer';
 import MapSection from './components/MapSection';
 import Footer from './components/Footer';
-import ColegioInfoSection from './components/ColegioInfoSection';
+import QuickAccessWheel from './components/QuickAccessWheel';
 import QuienesSomosSection from './components/QuienesSomosSection';
 import PlanLectorSection from './components/PlanLectorSection';
 import PlanLectorManagement from './components/PlanLectorManagement';
@@ -639,8 +639,8 @@ function App() {
       </div>
 
 
-      {/* Sección principal del Colegio Capellán Pascal */}
-      <ColegioInfoSection />
+      {/* Accesos rápidos flotantes para la comunidad escolar */}
+      <QuickAccessWheel />
 
       {/* Quiénes Somos Section */}
       <QuienesSomosSection />

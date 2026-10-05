@@ -57,9 +57,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                 className="flex items-center space-x-1 sm:space-x-2 hover:text-[#f2c500] transition-colors"
               >
                 <Instagram className="w-4 h-4 text-[#003b71]" />
-                <span className="text-xs hidden xl:inline">@colegiossccmanquehue</span>
-                <span className="text-xs xl:inline hidden">@colegiocapellanpascal</span>
-                <span className="text-xs xl:hidden">Instagram</span>
+                <span className="text-xs">@colegiocapellanpascal</span>
               </a>
               <a 
                 href="tel:+56322546520"
@@ -104,7 +102,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   <img
                     src={logoUrl}
                     alt="Colegio Capellán Pascal logo"
-                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-48 lg:w-48 2xl:h-64 2xl:w-64 shrink-0 object-contain drop-shadow-lg"
+                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72 shrink-0 object-contain drop-shadow-lg"
                     onError={(e) => {
                       // If logo fails to load, hide it
                       e.currentTarget.style.display = 'none';
@@ -112,7 +110,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   />
                 ) : (
                   <div
-                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-48 lg:w-48 2xl:h-64 2xl:w-64 shrink-0"
+                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72 shrink-0"
                     aria-hidden="true"
                   />
                 )}
