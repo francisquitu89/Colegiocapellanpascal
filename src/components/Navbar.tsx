@@ -92,8 +92,8 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
       </div>
 
       {/* MAIN THICK BAR - Institutional vertical bands with logo and navigation */}
-      <nav className="relative w-full overflow-visible border-b-4 border-[#003b71] bg-[repeating-linear-gradient(0deg,#ffffff_0,#ffffff_5px,#f2c500_5px,#f2c500_7px,#003b71_7px,#003b71_9px)]">
-        <div className="absolute inset-0 bg-white/70 pointer-events-none" aria-hidden="true" />
+      <nav className="relative w-full overflow-visible border-b-4 border-[#003b71] bg-white">
+        <div className="absolute inset-x-0 top-0 h-[3px] bg-[linear-gradient(90deg,#003b71_0%,#003b71_33%,#f2c500_33%,#f2c500_66%,#003b71_66%,#003b71_100%)] pointer-events-none" aria-hidden="true" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 relative overflow-visible">
 
@@ -116,19 +116,19 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                     aria-hidden="true"
                   />
                 )}
-                <span className="max-w-[12rem] sm:max-w-none text-base sm:text-xl md:text-2xl lg:text-3xl font-extrabold uppercase tracking-wide leading-tight text-[#003b71] drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
+                <span className="font-cinzel max-w-[12rem] sm:max-w-none text-base sm:text-xl md:text-2xl lg:text-3xl font-bold uppercase tracking-[0.06em] leading-tight text-[#003b71]">
                   Colegio Capellán Pascal
                 </span>
               </button>
             </div>
 
             {/* CENTER: DESKTOP MAIN MENU */}
-            <div className="hidden xl:flex items-center space-x-8 max-w-3xl flex-1 justify-center">
+            <div className="hidden xl:flex items-center space-x-7 ml-auto pl-10">
               
               {/* NUESTRO COLEGIO - Dropdown */}
               <div className="relative group">
                 <button
-                  className="text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
+                  className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
                   onMouseEnter={() => setIsOurOpen(true)}
                   onMouseLeave={() => setIsOurOpen(false)}
                 >
@@ -199,14 +199,14 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   }
                   setIsMenuOpen(false);
                 }}
-                className="text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
+                className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
               >
                 Tour Virtual
               </button>
               {/* ADMISION - Dropdown */}
               <div className="relative group">
                 <button
-                  className="text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
+                  className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
                   onMouseEnter={() => setIsAdmisionOpen(true)}
                   onMouseLeave={() => setIsAdmisionOpen(false)}
                 >
@@ -235,7 +235,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
               {/* CALENDARIOS - Dropdown */}
               <div className="relative group">
                 <button
-                  className="text-sm text-gray-800 uppercase whitespace-nowrap hover:text-blue-700 font-medium transition-colors"
+                  className="text-xs 2xl:text-sm text-[#003b71] uppercase whitespace-nowrap hover:text-[#f2c500] font-semibold transition-colors"
                   onMouseEnter={() => setCalendarsOpen(true)}
                   onMouseLeave={() => setCalendarsOpen(false)}
                 >
