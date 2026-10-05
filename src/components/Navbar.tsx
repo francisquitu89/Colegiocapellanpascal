@@ -96,7 +96,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-28 relative">
 
-            {/* LEFT: LOGO AND SCHOOL NAME */}
+            {/* LEFT: LOGO */}
             <div className="flex items-center">
               <button type="button" onClick={() => handleNavigation('home')} aria-label="Inicio" className="flex items-center mt-4 relative z-30 text-left">
                 {logoUrl ? (
@@ -116,11 +116,6 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   />
                 )}
 
-                <div className="ml-2 sm:ml-4 md:ml-6 leading-tight -mt-4 sm:-mt-6">
-                  <div className="text-sm sm:text-base md:text-xl lg:text-2xl text-gray-900 uppercase font-sans">
-                    <span className="font-extrabold">COLEGIO CAPELLÁN PASCAL</span>
-                  </div>
-                </div>
               </button>
             </div>
 

@@ -571,8 +571,8 @@ function App() {
         {backgroundImages.map((image, index) => (
           <div
             key={index}
-            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1500 ease-in-out ${
-              index === currentImageIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1500 ease-in-out ${
+              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
             }`}
             style={{ backgroundImage: `url(${image})` }}
           >
