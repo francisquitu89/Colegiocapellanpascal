@@ -43,25 +43,26 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
             <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 flex-shrink-0">
               <div className="hidden md:flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-white" />
-                <span className="text-xs">(+56 2) 2719 4300</span>
+                <span className="text-xs">+56 32 2546520</span>
               </div>
               <div className="hidden sm:flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-white" />
-                <span className="text-xs hidden lg:inline">colegio@ssccmanquehue.cl</span>
+                <span className="text-xs hidden lg:inline">contactoweb@capellanpascal.cl</span>
                 <span className="text-xs lg:hidden">Email</span>
               </div>
               <a 
-                href="https://www.instagram.com/colegiossccmanquehue/" 
+                href="https://www.instagram.com/colegiocapellanpascal/"
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center space-x-1 sm:space-x-2 hover:text-blue-300 transition-colors"
               >
                 <Instagram className="w-4 h-4 text-white" />
                 <span className="text-xs hidden xl:inline">@colegiossccmanquehue</span>
+                <span className="text-xs xl:inline hidden">@colegiocapellanpascal</span>
                 <span className="text-xs xl:hidden">Instagram</span>
               </a>
               <a 
-                href="tel:+56227194300"
+                href="tel:+56322546520"
                 className="flex md:hidden items-center space-x-1 hover:text-blue-300 transition-colors"
               >
                 <Phone className="w-4 h-4 text-white" />
@@ -93,7 +94,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
       {/* MAIN THICK BAR - White background with logo and navigation */}
       <nav className="w-full bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 relative">
+          <div className="flex items-center justify-between h-28 relative">
 
             {/* LEFT: LOGO AND SCHOOL NAME */}
             <div className="flex items-center">
@@ -101,8 +102,8 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                 {logoUrl ? (
                   <img
                     src={logoUrl}
-                    alt="Colegio Manquehue SSCC logo"
-                    className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 lg:h-44 lg:w-44 object-contain"
+                    alt="Colegio Capellán Pascal logo"
+                    className="h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 lg:h-52 lg:w-52 object-contain"
                     onError={(e) => {
                       // If logo fails to load, hide it
                       e.currentTarget.style.display = 'none';
@@ -110,16 +111,14 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   />
                 ) : (
                   <div
-                    className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 lg:h-44 lg:w-44"
+                    className="h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 lg:h-52 lg:w-52"
                     aria-hidden="true"
                   />
                 )}
 
                 <div className="ml-2 sm:ml-4 md:ml-6 leading-tight -mt-4 sm:-mt-6">
                   <div className="text-sm sm:text-base md:text-xl lg:text-2xl text-gray-900 uppercase font-sans">
-                    <span className="font-normal">COLEGIO </span>
-                    <span className="font-extrabold">SSCC</span>
-                    <span className="font-normal"> MANQUEHUE</span>
+                    <span className="font-extrabold">COLEGIO CAPELLÁN PASCAL</span>
                   </div>
                 </div>
               </button>

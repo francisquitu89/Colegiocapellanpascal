@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getSiteLogoUrl } from '../lib/siteLogo';
 
 const Footer: React.FC = () => {
-  const [logoUrl, setLogoUrl] = useState<string>('https://ssccmanquehue.cl/wp-content/uploads/2025/03/70SSCC_OK_transparente-4-1-1-1.png');
+  const [logoUrl, setLogoUrl] = useState<string>('');
   
   useEffect(() => {
     void loadLogo();
@@ -33,23 +33,25 @@ const Footer: React.FC = () => {
       <div className="flex flex-col items-center space-y-8">
         <div className="flex items-center justify-center space-x-8 flex-wrap">
           <div className="flex items-center">
-            <img
-              src={logoUrl}
-              alt="Colegio Manquehue SSCC Logo"
-              className="h-16 w-auto object-contain"
-            />
+            {logoUrl && (
+              <img
+                src={logoUrl}
+                alt="Colegio Capellán Pascal logo"
+                className="h-24 w-auto object-contain"
+              />
+            )}
           </div>
         </div>
 
         <div className="text-center">
           <p className="text-blue-200 text-sm md:text-base font-medium">
-            Colegio Manquehue SSCC | Copyright ® 1999 - 2025 | Política de Privacidad
+            Colegio Capellán Pascal | Copyright ® 1992 - 2026 | Política de Privacidad
           </p>
         </div>
 
         <div className="text-center text-blue-100 text-sm mt-2">
-          <p>Padre Damián de Veuster 2151</p>
-          <p className="mt-1">Vitacura, Región Metropolitana</p>
+          <p>Viña del Mar, Valparaíso, Chile</p>
+          <p className="mt-1">+56 32 2546520 · contactoweb@capellanpascal.cl</p>
         </div>
       </div>
 

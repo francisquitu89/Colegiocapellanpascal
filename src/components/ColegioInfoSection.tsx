@@ -9,8 +9,8 @@ export interface ColegioSectionItem {
 
 const baseSecciones = [
   {
-    title: "Comunidad y Espiritualidad",
-    description: "Vive la espiritualidad SSCC y la vida comunitaria.",
+    title: "Dios, Patria y Familia",
+    description: "Descubre los valores que orientan nuestra formación y vida comunitaria.",
     onClick: () => window.navigateTo && window.navigateTo('comunidad'),
   },
   {

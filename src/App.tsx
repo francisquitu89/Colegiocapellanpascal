@@ -593,11 +593,11 @@ function App() {
         <main className="px-8 md:px-12 lg:px-16">
           <div className="text-left max-w-4xl">
             <h1 className="text-white text-xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight tracking-wide drop-shadow-lg">
-              ¿POR QUÉ ELEGIR<br />SAGRADOS CORAZONES<br />DE MANQUEHUE?
+              COLEGIO CAPELLÁN PASCAL<br />DIOS, PATRIA Y FAMILIA
             </h1>
             
             <p className="text-white text-xs md:text-sm lg:text-base mb-6 leading-relaxed font-medium max-w-2xl drop-shadow-md">
-              FORMACIÓN INTEGRAL – ESPIRITUALIDAD SSCC
+              FORMACIÓN INTEGRAL PARA LA VIDA, EL SERVICIO Y LA COMUNIDAD
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
@@ -639,7 +639,7 @@ function App() {
       </div>
 
 
-      {/* Sección ¿Por qué elegir Sagrados Corazones de Manquehue? */}
+      {/* Sección principal del Colegio Capellán Pascal */}
       <ColegioInfoSection />
 
       {/* Quiénes Somos Section */}
