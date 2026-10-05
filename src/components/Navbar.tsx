@@ -98,13 +98,13 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
           <div className="flex items-center justify-between h-20 relative overflow-visible">
 
             {/* LEFT: LOGO */}
-            <div className="flex items-center min-w-0">
+            <div className="flex items-center shrink-0">
               <button type="button" onClick={() => handleNavigation('home')} aria-label="Inicio" className="flex items-center gap-1 sm:gap-2 mt-4 relative z-30 text-left">
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt="Colegio Capellán Pascal logo"
-                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-64 lg:w-64 object-contain drop-shadow-lg"
+                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-48 lg:w-48 2xl:h-64 2xl:w-64 shrink-0 object-contain drop-shadow-lg"
                     onError={(e) => {
                       // If logo fails to load, hide it
                       e.currentTarget.style.display = 'none';
@@ -112,18 +112,18 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   />
                 ) : (
                   <div
-                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-64 lg:w-64"
+                    className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-48 lg:w-48 2xl:h-64 2xl:w-64 shrink-0"
                     aria-hidden="true"
                   />
                 )}
-                <span className="font-cinzel whitespace-nowrap text-sm sm:text-xl md:text-2xl lg:text-3xl font-bold uppercase tracking-[0.04em] leading-tight text-[#003b71]">
+                <span className="font-cinzel shrink-0 whitespace-nowrap text-sm sm:text-xl md:text-2xl lg:text-2xl 2xl:text-3xl font-bold uppercase tracking-[0.04em] leading-tight text-[#003b71]">
                   Colegio Capellán Pascal
                 </span>
               </button>
             </div>
 
             {/* CENTER: DESKTOP MAIN MENU */}
-            <div className="hidden xl:flex items-center space-x-7 ml-auto pl-10">
+            <div className="hidden xl:flex shrink-0 items-center space-x-5 2xl:space-x-7 ml-auto pl-6 2xl:pl-10">
               
               {/* NUESTRO COLEGIO - Dropdown */}
               <div className="relative group">
