@@ -57,6 +57,7 @@ import PlanLectorSection from './components/PlanLectorSection';
 import PlanLectorManagement from './components/PlanLectorManagement';
 import DirectorioFundacionManagement from './components/DirectorioFundacionManagement';
 import RectoriaSection from './components/RectoriaSection';
+import SectionTransition from './components/SectionTransition';
 import ProyectoEducativoDocumento from './components/ProyectoEducativoDocumento';
 import ProyectoEducativoDocumentoManagement from './components/ProyectoEducativoDocumentoManagement';
 import ConsejoDirectivo from './components/ConsejoDirectivo';
@@ -643,6 +644,14 @@ function App() {
 
       {/* Mensaje de Rectoría */}
       <RectoriaSection cinematic />
+
+      {/* Transición cinematográfica hacia Noticias */}
+      <SectionTransition
+        imageUrl="https://i.postimg.cc/X75PxmvL/BENDICION-DE-CORBATAS-1024x683.jpg"
+        alt="Bendición de corbatas del Colegio Capellán Pascal"
+        eyebrow="Vida de nuestra comunidad"
+        title="Noticias y momentos que nos unen"
+      />
 
       {/* News Section */}
       <NewsSection />
