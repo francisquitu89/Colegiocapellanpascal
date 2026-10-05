@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Configuración principal - Supabase principal
-const PRIMARY_SUPABASE_URL = 'https://ntncdusmihemyaqrzajm.supabase.co';
-const PRIMARY_SUPABASE_KEY = 'sb_publishable_kh_0x5npworQbEFVlyK3Xw_2kidvRNM';
+const PRIMARY_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://ntncdusmihemyaqrzajm.supabase.co';
+const PRIMARY_SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_kh_0x5npworQbEFVlyK3Xw_2kidvRNM';
 
 // Configuración de fallback (variables de entorno)
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -11,7 +11,7 @@ const driveRoutesSupabaseUrl = import.meta.env.VITE_DRIVE_ROUTES_SUPABASE_URL ||
 const driveRoutesSupabasePublishableKey = import.meta.env.VITE_DRIVE_ROUTES_SUPABASE_PUBLISHABLE_KEY || PRIMARY_SUPABASE_KEY;
 
 // Validar que la URL principal esté disponible
-console.log('Primary Supabase URL (ntncdusmihemyaqrzajm):', driveRoutesSupabaseUrl);
+console.log('Primary Supabase URL:', driveRoutesSupabaseUrl);
 console.log('Fallback Supabase URL:', supabaseUrl || 'Not configured');
 
 if (!driveRoutesSupabaseUrl || !driveRoutesSupabasePublishableKey) {
@@ -30,7 +30,7 @@ if (supabaseUrl && supabaseAnonKey) {
   console.warn('No secondary Supabase configured. Using primary only.');
 }
 
-// Cliente principal - SIEMPRE apunta a https://ntncdusmihemyaqrzajm.supabase.co
+// Cliente principal
 export const driveRoutesSupabase = createClient(driveRoutesSupabaseUrl, driveRoutesSupabasePublishableKey);
 
 // Cliente secundario - para fallback (usa variables de entorno si está configurado, sino usa la principal)
