@@ -642,7 +642,7 @@ function App() {
       <QuickAccessWheel />
 
       {/* Mensaje de Rectoría */}
-      <RectoriaSection />
+      <RectoriaSection cinematic />
 
       {/* News Section */}
       <NewsSection />

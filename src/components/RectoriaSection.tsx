@@ -4,6 +4,7 @@ import { useTypewriter } from '../hooks/useTypewriter';
 
 interface RectoriaSectionProps {
   onBack?: () => void;
+  cinematic?: boolean;
 }
 
 const TypedParagraph: React.FC<{ text: string; delay: number }> = ({ text, delay }) => {
@@ -17,9 +18,24 @@ const TypedParagraph: React.FC<{ text: string; delay: number }> = ({ text, delay
   );
 };
 
-const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
+const ScrollTypedParagraph: React.FC<{ text: string; progress: number }> = ({ text, progress }) => {
+  const displayedLength = Math.min(text.length, Math.floor(text.length * progress));
+  const displayedText = text.slice(0, displayedLength);
+
+  return (
+    <p>
+      {displayedText}
+      {displayedLength < text.length && (
+        <span className="ml-1 inline-block h-5 w-0.5 animate-pulse bg-[#f2c500]" />
+      )}
+    </p>
+  );
+};
+
+const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = false }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [parallaxOffset, setParallaxOffset] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   
   const rectorMessage = [
@@ -44,8 +60,15 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
       frameId = window.requestAnimationFrame(() => {
         if (sectionRef.current) {
           const rect = sectionRef.current.getBoundingClientRect();
-          const progress = Math.max(-1, Math.min(1, (window.innerHeight / 2 - (rect.top + rect.height / 2)) / window.innerHeight));
-          setParallaxOffset(progress * 72);
+          if (cinematic) {
+            const scrollableDistance = Math.max(1, rect.height - window.innerHeight);
+            const progress = Math.max(0, Math.min(1, -rect.top / scrollableDistance));
+            setScrollProgress(progress);
+            setParallaxOffset((progress - 0.5) * 120);
+          } else {
+            const progress = Math.max(-1, Math.min(1, (window.innerHeight / 2 - (rect.top + rect.height / 2)) / window.innerHeight));
+            setParallaxOffset(progress * 72);
+          }
         }
         frameId = 0;
       });
@@ -58,7 +81,72 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack }) => {
       window.removeEventListener('scroll', handleScroll);
       if (frameId) window.cancelAnimationFrame(frameId);
     };
-  }, []);
+  }, [cinematic]);
+
+  if (cinematic) {
+    const paragraphProgress = (index: number) => Math.max(0, Math.min(1, (scrollProgress - 0.2 - index * 0.12) / 0.22));
+
+    return (
+      <section ref={sectionRef} className="relative overflow-clip bg-[#001d38]" style={{ height: '260vh' }}>
+        <div className="sticky top-0 flex min-h-screen items-center overflow-hidden">
+          <img
+            src="https://i.postimg.cc/9fdTnFj1/Discurso-solemne-en-el-colegio.png"
+            alt="Discurso solemne en el Colegio Capellán Pascal"
+            className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-300 ease-out"
+            style={{ transform: `scale(1.08) translateY(${parallaxOffset}px)` }}
+          />
+          <div className="absolute inset-0 bg-[#001d38]/55" />
+          <div
+            className="absolute inset-0 bg-[#001d38]"
+            style={{ opacity: Math.max(0, 0.42 - scrollProgress * 0.34) }}
+          />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#003b71_0%,#003b71_33%,#f2c500_33%,#f2c500_66%,#003b71_66%,#003b71_100%)]" />
+
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div
+              className="grid items-center gap-8 lg:grid-cols-[0.8fr_1.2fr]"
+              style={{
+                transform: `translateY(${(1 - scrollProgress) * 55}px)`,
+                opacity: Math.min(1, scrollProgress * 2.8),
+              }}
+            >
+              <div className="text-white">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-[#f2c500]">
+                  Les habla el rector
+                </p>
+                <h2 className="font-cinzel text-4xl font-bold leading-tight md:text-6xl">
+                  Un mensaje para nuestra comunidad
+                </h2>
+                <p className="mt-6 max-w-md text-base leading-relaxed text-white/80">
+                  Desplázate para escuchar y leer el mensaje de Rectoría.
+                </p>
+                <div className="mt-8 h-1 w-32 overflow-hidden rounded-full bg-white/20">
+                  <div className="h-full origin-left bg-[#f2c500] transition-transform duration-150" style={{ transform: `scaleX(${scrollProgress})` }} />
+                </div>
+              </div>
+
+              <div className="rounded-2xl border-t-4 border-t-[#f2c500] bg-white p-6 shadow-2xl md:p-10">
+                <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c500]">Mensaje de Rectoría</p>
+                <h3 className="font-cinzel mb-8 text-3xl font-bold text-[#003b71] md:text-4xl">
+                  Estimada comunidad<br />Colegio Capellán Pascal
+                </h3>
+                <div className="space-y-4 text-gray-700 leading-relaxed">
+                  {rectorMessage.map((paragraph, index) => (
+                    <ScrollTypedParagraph key={paragraph} text={paragraph} progress={paragraphProgress(index)} />
+                  ))}
+                  <div className="pt-5 mt-6 border-t border-[#003b71]/15">
+                    <p className="text-xl font-bold text-[#003b71]">Ronald Baasch Barberis</p>
+                    <p className="text-gray-600 italic">Rector</p>
+                    <p className="text-gray-700">Colegio Capellán Pascal</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section ref={sectionRef} className="relative overflow-hidden bg-[#f8fafc]">
