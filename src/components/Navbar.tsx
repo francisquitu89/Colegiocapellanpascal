@@ -94,7 +94,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
       {/* MAIN THICK BAR - White background with logo and navigation */}
       <nav className="w-full bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-28 relative">
+          <div className="flex items-center justify-between h-36 relative">
 
             {/* LEFT: LOGO */}
             <div className="flex items-center">
@@ -103,7 +103,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   <img
                     src={logoUrl}
                     alt="Colegio Capellán Pascal logo"
-                    className="h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 lg:h-52 lg:w-52 object-contain"
+                    className="h-36 w-36 sm:h-44 sm:w-44 md:h-52 md:w-52 lg:h-60 lg:w-60 object-contain"
                     onError={(e) => {
                       // If logo fails to load, hide it
                       e.currentTarget.style.display = 'none';
@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   />
                 ) : (
                   <div
-                    className="h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 lg:h-52 lg:w-52"
+                    className="h-36 w-36 sm:h-44 sm:w-44 md:h-52 md:w-52 lg:h-60 lg:w-60"
                     aria-hidden="true"
                   />
                 )}
