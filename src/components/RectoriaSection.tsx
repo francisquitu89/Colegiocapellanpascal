@@ -105,20 +105,29 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
 
         <section className="relative z-20 bg-[#f8fafc]">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#003b71_0%,#003b71_33%,#f2c500_33%,#f2c500_66%,#003b71_66%,#003b71_100%)]" />
-          <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-            <div className={`rounded-2xl border-t-4 border-t-[#f2c500] bg-white p-6 shadow-2xl transition-all duration-1000 md:p-12 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-              <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c500]">Mensaje de Rectoría</p>
-              <h3 className="font-cinzel mb-8 text-3xl font-bold text-[#003b71] md:text-4xl">
-                Estimada comunidad<br />Colegio Capellán Pascal
-              </h3>
-              <div className="space-y-4 text-gray-700 leading-relaxed">
-                {rectorMessage.map((paragraph, index) => (
-                  <TypedParagraph key={paragraph} text={paragraph} delay={index * 900} />
-                ))}
-                <div className="pt-5 mt-6 border-t border-[#003b71]/15">
-                  <p className="text-xl font-bold text-[#003b71]">Ronald Baasch Barberis</p>
-                  <p className="text-gray-600 italic">Rector</p>
-                  <p className="text-gray-700">Colegio Capellán Pascal</p>
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
+            <div className={`grid items-start bg-white shadow-xl transition-all duration-1000 lg:grid-cols-[0.82fr_1.18fr] ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+              <div className="bg-[#003b71]">
+                <img
+                  src="https://i.postimg.cc/FFJCs0mq/Foto-Rector-CCP-2026-ajustada-IA-789x1024.png"
+                  alt="Ronald Baasch Barberis, rector del Colegio Capellán Pascal"
+                  className="block h-auto max-h-[52rem] min-h-[28rem] w-full object-cover object-top lg:h-full"
+                />
+              </div>
+              <div className="p-6 md:p-10 lg:p-14">
+                <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c500]">Mensaje de Rectoría</p>
+                <h3 className="font-cinzel mb-8 text-3xl font-bold uppercase leading-tight text-[#003b71] md:text-4xl">
+                  Estimada comunidad<br />Colegio Capellán Pascal
+                </h3>
+                <div className="space-y-4 text-gray-700 leading-relaxed">
+                  {rectorMessage.map((paragraph, index) => (
+                    <TypedParagraph key={paragraph} text={paragraph} delay={index * 900} />
+                  ))}
+                  <div className="pt-5 mt-6 border-t border-[#003b71]/15">
+                    <p className="text-xl font-bold text-[#003b71]">Ronald Baasch Barberis</p>
+                    <p className="text-gray-600 italic">Rector</p>
+                    <p className="text-gray-700">Colegio Capellán Pascal</p>
+                  </div>
                 </div>
               </div>
             </div>
