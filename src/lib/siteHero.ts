@@ -4,9 +4,9 @@ export const HOME_HERO_BUCKET = 'site-logos';
 export const HOME_HERO_FILENAME = 'site-home-hero';
 export const HOME_HERO_UPDATED_EVENT = 'site-hero-updated';
 export const HOME_HERO_DEFAULT_IMAGES = [
-  'https://i.postimg.cc/ykGNws5m/Fotos-colegia-219.webp',
-  'https://i.postimg.cc/w7rBSgP2/Fotos-colegia-55-1024x768.webp',
-  'https://i.postimg.cc/Why4QTKn/IV-A-2.webp'
+  'https://i.postimg.cc/TfmjSLLf/Fotos-colegia-219.webp?dl=1',
+  'https://i.postimg.cc/Z43PgBB5/Fotos-colegia-55-1024x768.webp?dl=1',
+  'https://i.postimg.cc/8NWd3JJP/IV-A-2.webp?dl=1'
 ];
 const HOME_HERO_LOCAL_STORAGE_KEY = 'site-home-hero-base-images';
 
