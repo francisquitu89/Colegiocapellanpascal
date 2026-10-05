@@ -28,12 +28,12 @@ const MapSection: React.FC = () => {
             <div className="mx-auto max-w-4xl rounded-lg overflow-hidden shadow-lg">
               <div className="relative" style={{ paddingTop: '60%' }}>
                 <iframe
-                  src="https://www.google.com/maps?q=Guardiamarina%20Riquelme%20s%2Fn%2C%20Las%20Salinas%2C%20Vi%C3%B1a%20del%20Mar&output=embed"
+                  src="https://tours.tourify.cl/tours/F6HDltY9V?disable=logo,ribbon,controls,floorplan,request,leadgen,sound,nadir"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="Vista Fachada - Street View"
+                  title="Vista Fachada - Tour virtual 360°"
                   className="absolute inset-0 w-full h-full"
                 />
               </div>
