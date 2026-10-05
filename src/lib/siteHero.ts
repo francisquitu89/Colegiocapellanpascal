@@ -4,9 +4,9 @@ export const HOME_HERO_BUCKET = 'site-logos';
 export const HOME_HERO_FILENAME = 'site-home-hero';
 export const HOME_HERO_UPDATED_EVENT = 'site-hero-updated';
 export const HOME_HERO_DEFAULT_IMAGES = [
-  'https://i.postimg.cc/TfmjSLLf/Fotos-colegia-219.webp?dl=1',
-  'https://i.postimg.cc/Z43PgBB5/Fotos-colegia-55-1024x768.webp?dl=1',
-  'https://i.postimg.cc/8NWd3JJP/IV-A-2.webp?dl=1'
+  'https://i.postimg.cc/ykGNws5m/Fotos-colegia-219.webp',
+  'https://i.postimg.cc/fbTHTZP9/Foto-1-Alumnos-de-diferenciado-IV-Comprension-historica-del-presente-Explicacion-a-del-Combate-N.jpg',
+  'https://i.postimg.cc/dtfQ9t28/LITURGIA-DE-CENIZAS-scaled.jpg'
 ];
 const HOME_HERO_LOCAL_STORAGE_KEY = 'site-home-hero-base-images';
 
