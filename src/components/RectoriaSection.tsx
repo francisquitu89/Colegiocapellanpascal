@@ -74,7 +74,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
             <img
               src="https://i.postimg.cc/9fdTnFj1/Discurso-solemne-en-el-colegio.png"
               alt="Discurso solemne en el Colegio Capellán Pascal"
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-cover object-[center_28%]"
               style={{
                 position: 'fixed',
                 top: 0,
