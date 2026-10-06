@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, User, Eye, EyeOff, Shield, ArrowLeft } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ArrowLeft, GraduationCap } from 'lucide-react';
 import { getSiteLogoUrl } from '../lib/siteLogo';
 
 interface AdminLoginProps {
@@ -12,7 +12,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [logoUrl, setLogoUrl] = useState<string>('https://ssccmanquehue.cl/wp-content/uploads/2025/03/70SSCC_OK_transparente-4-1-1-1.png');
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   
   useEffect(() => {
     void loadLogo();
@@ -39,7 +39,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     setError('');
 
     // Simple authentication check
-    if (email === 'admin@ssccmanquehue.cl' && password === 'admin123') {
+    if (email.trim().toLowerCase() === 'admin@capellanpascal.cl' && password === 'admin123') {
       setTimeout(() => {
         onLogin();
         setLoading(false);
@@ -53,12 +53,13 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b2540] to-[#08304a] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-white to-amber-100 flex items-center justify-center px-4 relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-3 bg-gradient-to-r from-sky-600 via-white to-red-600" />
       <div className="max-w-md w-full">
         {/* Back Button */}
         <button
           onClick={handleBack}
-          className="flex items-center text-blue-200 hover:text-white transition-all duration-300 mb-8 group"
+          className="flex items-center text-sky-800 hover:text-red-700 transition-all duration-300 mb-8 group"
         >
           <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
           Volver al inicio
@@ -66,23 +67,27 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <img src={logoUrl} alt="SSCC Manquehue" className="h-16 w-16 object-contain" />
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-sky-100 overflow-hidden">
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo Colegio Capellán Pascal" className="h-16 w-16 object-contain" />
+            ) : (
+              <GraduationCap className="w-12 h-12 text-sky-700" aria-hidden="true" />
+            )}
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Panel de Administración
+          <h1 className="text-3xl font-bold text-sky-950 mb-2">
+            Acceso Administración
           </h1>
-          <p className="text-blue-100">
-            SSCC Manquehue
+          <p className="text-slate-600">
+            Colegio Capellán Pascal · Dios, Patria y Familia
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-lg shadow-xl p-8 border border-blue-100">
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-sky-100">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-blue-900 mb-2">
+              <label className="block text-sm font-medium text-sky-950 mb-2">
                 Correo Electrónico
               </label>
               <div className="relative">
@@ -93,8 +98,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent"
-                  placeholder="admin@ssccmanquehue.cl"
+                  className="block w-full pl-10 pr-3 py-3 border border-sky-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-transparent"
+                  placeholder="admin@capellanpascal.cl"
                   required
                 />
               </div>
@@ -102,7 +107,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-blue-900 mb-2">
+              <label className="block text-sm font-medium text-sky-950 mb-2">
                 Contraseña
               </label>
               <div className="relative">
@@ -113,7 +118,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-3 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent"
+                  className="block w-full pl-10 pr-12 py-3 border border-sky-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-transparent"
                   placeholder="••••••••"
                   required
                 />
@@ -133,8 +138,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-blue-700 text-sm">{error}</p>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-red-700 text-sm">{error}</p>
               </div>
             )}
 
@@ -142,7 +147,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+              className="w-full bg-gradient-to-r from-sky-700 to-blue-800 text-white py-3 px-4 rounded-lg font-semibold hover:from-sky-800 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -157,8 +162,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-blue-100 text-sm">
-          <p>© 2025 SSCC Manquehue. Todos los derechos reservados.</p>
+        <div className="text-center mt-8 text-slate-600 text-sm">
+          <p>© Colegio Capellán Pascal</p>
         </div>
       </div>
     </div>

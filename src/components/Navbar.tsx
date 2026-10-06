@@ -228,15 +228,15 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   <img
                     src={logoUrl}
                     alt="Colegio Capellán Pascal logo"
-                    className="h-40 w-40 shrink-0 object-contain drop-shadow-lg sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72"
+                    className="h-24 w-24 shrink-0 object-contain drop-shadow-lg sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72"
                     onError={(event) => {
                       event.currentTarget.style.display = 'none';
                     }}
                   />
                 ) : (
-                  <div className="h-40 w-40 shrink-0 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72" aria-hidden="true" />
+                  <div className="h-24 w-24 shrink-0 sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-56 lg:w-56 2xl:h-72 2xl:w-72" aria-hidden="true" />
                 )}
-                <span className="relative shrink-0 whitespace-nowrap font-cinzel text-sm font-bold uppercase leading-tight tracking-[0.04em] text-[#003b71] sm:text-xl md:text-2xl lg:text-2xl xl:-top-2 2xl:text-3xl">
+                <span className="relative -translate-x-4 shrink-0 whitespace-nowrap font-cinzel text-[10px] font-bold uppercase leading-tight tracking-[0.04em] text-[#003b71] sm:text-xl md:text-2xl lg:text-2xl xl:-top-2 2xl:text-3xl">
                   Colegio Capellán Pascal
                 </span>
               </button>
@@ -295,14 +295,19 @@ const Navbar: React.FC<NavbarProps> = ({ onPageChange }) => {
                   </section>
                 );
               })}
-              <div className="flex items-center justify-between pt-2 text-sm text-gray-700">
+              <div className="flex items-center justify-between gap-3 pt-2 text-sm text-gray-700">
                 <div>
                   <div className="text-xs text-gray-600">Teléfono</div>
                   <a href="tel:+56322546520">+56 32 2546520</a>
                 </div>
-                <div>
+                <div className="min-w-0 text-right">
                   <div className="text-xs text-gray-600">Email</div>
-                  <a href="mailto:contactoweb@capellanpascal.cl">contactoweb@capellanpascal.cl</a>
+                  <a
+                    href="mailto:contactoweb@capellanpascal.cl"
+                    className="block max-w-36 break-all text-[10px] leading-tight sm:max-w-none sm:text-xs"
+                  >
+                    contactoweb@capellanpascal.cl
+                  </a>
                 </div>
               </div>
             </div>
