@@ -9,6 +9,7 @@ interface SchoolEvent {
   actividad: string;
   year: number;
   imagen_url: string | null;
+  etiqueta: string | null;
 }
 
 interface EventForm {
@@ -16,6 +17,7 @@ interface EventForm {
   hora: string;
   actividad: string;
   imagen_url: string;
+  etiqueta: string;
 }
 
 interface FechasImportantesManagementProps {
@@ -27,6 +29,7 @@ const EMPTY_FORM: EventForm = {
   hora: '',
   actividad: '',
   imagen_url: '',
+  etiqueta: '',
 };
 
 const formatFecha = (fecha: string) =>
@@ -38,6 +41,10 @@ const formatFecha = (fecha: string) =>
 
 function isMissingImageColumn(error: { code?: string; message?: string }) {
   return error.code === '42703' || error.message?.includes('imagen_url');
+}
+
+function isMissingColumn(error: { code?: string; message?: string }, column: string) {
+  return error.code === '42703' && error.message?.includes(column);
 }
 
 function isValidPostimageUrl(value: string) {
@@ -61,18 +68,52 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
   const [message, setMessage] = useState('');
   const [loadError, setLoadError] = useState('');
   const [supportsEventImages, setSupportsEventImages] = useState(true);
+  const [supportsEventLabels, setSupportsEventLabels] = useState(true);
 
   const fetchFechas = useCallback(async () => {
     setLoading(true);
     setLoadError('');
     const result = await driveRoutesSupabase
       .from('fechas_importantes')
-      .select('id, fecha, hora, actividad, year, imagen_url')
+      .select('id, fecha, hora, actividad, year, imagen_url, etiqueta')
       .eq('year', selectedYear)
       .order('fecha', { ascending: true })
       .order('hora', { ascending: true });
 
-    if (result.error && isMissingImageColumn(result.error)) {
+    if (result.error && isMissingColumn(result.error, 'etiqueta')) {
+      setSupportsEventLabels(false);
+      const imageResult = await driveRoutesSupabase
+        .from('fechas_importantes')
+        .select('id, fecha, hora, actividad, year, imagen_url')
+        .eq('year', selectedYear)
+        .order('fecha', { ascending: true })
+        .order('hora', { ascending: true });
+
+      if (imageResult.error && isMissingImageColumn(imageResult.error)) {
+        setSupportsEventImages(false);
+        const legacyResult = await driveRoutesSupabase
+          .from('fechas_importantes')
+          .select('id, fecha, hora, actividad, year')
+          .eq('year', selectedYear)
+          .order('fecha', { ascending: true })
+          .order('hora', { ascending: true });
+
+        if (legacyResult.error) {
+          console.error('Error fetching school calendar:', legacyResult.error);
+          setLoadError('No se pudieron cargar las actividades. Revisa la conexión con Supabase e inténtalo otra vez.');
+          setFechas([]);
+        } else {
+          setFechas((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null, etiqueta: null })));
+        }
+      } else if (imageResult.error) {
+        console.error('Error fetching school calendar:', imageResult.error);
+        setLoadError('No se pudieron cargar las actividades. Revisa la conexión con Supabase e inténtalo otra vez.');
+        setFechas([]);
+      } else {
+        setSupportsEventImages(true);
+        setFechas((imageResult.data || []).map((event) => ({ ...event, etiqueta: null })));
+      }
+    } else if (result.error && isMissingImageColumn(result.error)) {
       setSupportsEventImages(false);
       const legacyResult = await driveRoutesSupabase
         .from('fechas_importantes')
@@ -86,7 +127,7 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
         setLoadError('No se pudieron cargar las actividades. Revisa la conexión con Supabase e inténtalo otra vez.');
         setFechas([]);
       } else {
-        setFechas((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null })));
+        setFechas((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null, etiqueta: null })));
       }
     } else if (result.error) {
       console.error('Error fetching school calendar:', result.error);
@@ -94,6 +135,7 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
       setFechas([]);
     } else {
       setSupportsEventImages(true);
+      setSupportsEventLabels(true);
       setFechas(result.data || []);
     }
     setLoading(false);
@@ -144,6 +186,7 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
       actividad: form.actividad.trim(),
       year,
       ...(supportsEventImages ? { imagen_url: form.imagen_url.trim() || null } : {}),
+      ...(supportsEventLabels ? { etiqueta: form.etiqueta.trim() || null } : {}),
     };
     const result = editingId === null
       ? await driveRoutesSupabase.from('fechas_importantes').insert(payload)
@@ -171,6 +214,7 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
       hora: event.hora || '',
       actividad: event.actividad,
       imagen_url: event.imagen_url,
+      etiqueta: event.etiqueta || '',
     });
     setMessage('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -222,9 +266,9 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
           </div>
         </section>
 
-        {!supportsEventImages && (
+        {(!supportsEventImages || !supportsEventLabels) && (
           <p role="status" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            El calendario carga en modo compatible, pero para guardar y mostrar fotos debes ejecutar la migración SQL de imágenes en Supabase.
+            El calendario carga en modo compatible. Ejecuta las migraciones pendientes para guardar etiquetas y mostrar fotos.
           </p>
         )}
 
@@ -272,6 +316,22 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
                   placeholder="Describe la actividad para las familias y estudiantes"
                   className="w-full resize-y rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
                 />
+              </div>
+              <div>
+                <label htmlFor="calendar-event-label" className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  Mini título <span className="font-normal text-slate-400">(opcional)</span>
+                </label>
+                <input
+                  id="calendar-event-label"
+                  type="text"
+                  maxLength={50}
+                  value={form.etiqueta}
+                  disabled={!supportsEventLabels}
+                  onChange={(event) => setForm({ ...form, etiqueta: event.target.value })}
+                  placeholder="Ej.: Vida escolar"
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+                />
+                <p className="mt-1 text-xs text-slate-400">Se mostrará como una etiqueta sobre la actividad.</p>
               </div>
               <div>
                 <label htmlFor="calendar-event-image" className="mb-1.5 block text-sm font-semibold text-slate-700">
@@ -365,6 +425,11 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
                         {formatFecha(event.fecha)}
                       </div>
                       <div className="min-w-0">
+                        {event.etiqueta && (
+                          <span className="mb-1 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#805900]">
+                            {event.etiqueta}
+                          </span>
+                        )}
                         <h3 className="font-semibold leading-relaxed text-[#123c66]">{event.actividad}</h3>
                         {event.hora && <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-slate-500"><Clock3 className="h-3.5 w-3.5" />{event.hora}</p>}
                       </div>

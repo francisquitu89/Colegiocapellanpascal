@@ -9,6 +9,7 @@ interface SchoolEvent {
   actividad: string;
   year: number;
   imagen_url: string | null;
+  etiqueta: string | null;
 }
 
 interface FechasImportantesSectionProps {
@@ -36,8 +37,15 @@ function shiftMonth(date: Date, amount: number) {
   return new Date(date.getFullYear(), date.getMonth() + amount, 1);
 }
 
-function isMissingImageColumn(error: { code?: string; message?: string }) {
-  return error.code === '42703' || error.message?.includes('imagen_url');
+function isMissingColumn(error: { code?: string; message?: string }, column: string) {
+  return error.code === '42703' && error.message?.includes(column);
+}
+
+function getEventLabel(event: SchoolEvent) {
+  if (event.etiqueta?.trim()) return event.etiqueta;
+  return event.actividad
+    .replace(/^Actividad de muestra:\s*/i, '')
+    .replace(/^Feriado nacional:\s*/i, '');
 }
 
 export default function FechasImportantesSection({
@@ -50,7 +58,7 @@ export default function FechasImportantesSection({
   const [events, setEvents] = useState<SchoolEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
-  const [imageSchemaUnavailable, setImageSchemaUnavailable] = useState(false);
+  const [eventMetadataUnavailable, setEventMetadataUnavailable] = useState(false);
 
   const loadEvents = useCallback(async () => {
     const year = viewDate.getFullYear();
@@ -59,13 +67,44 @@ export default function FechasImportantesSection({
 
     const result = await driveRoutesSupabase
       .from('fechas_importantes')
-      .select('id, fecha, hora, actividad, year, imagen_url')
+      .select('id, fecha, hora, actividad, year, imagen_url, etiqueta')
       .eq('year', year)
       .order('fecha', { ascending: true })
       .order('hora', { ascending: true });
 
-    if (result.error && isMissingImageColumn(result.error)) {
-      setImageSchemaUnavailable(true);
+    if (result.error && isMissingColumn(result.error, 'etiqueta')) {
+      setEventMetadataUnavailable(true);
+      const imageResult = await driveRoutesSupabase
+        .from('fechas_importantes')
+        .select('id, fecha, hora, actividad, year, imagen_url')
+        .eq('year', year)
+        .order('fecha', { ascending: true })
+        .order('hora', { ascending: true });
+
+      if (imageResult.error && isMissingColumn(imageResult.error, 'imagen_url')) {
+        const legacyResult = await driveRoutesSupabase
+          .from('fechas_importantes')
+          .select('id, fecha, hora, actividad, year')
+          .eq('year', year)
+          .order('fecha', { ascending: true })
+          .order('hora', { ascending: true });
+
+        if (legacyResult.error) {
+          console.error('Error loading school calendar:', legacyResult.error);
+          setLoadError('No pudimos cargar el calendario. Revisa tu conexión e inténtalo otra vez.');
+          setEvents([]);
+        } else {
+          setEvents((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null, etiqueta: null })));
+        }
+      } else if (imageResult.error) {
+        console.error('Error loading school calendar:', imageResult.error);
+        setLoadError('No pudimos cargar el calendario. Revisa tu conexión e inténtalo otra vez.');
+        setEvents([]);
+      } else {
+        setEvents((imageResult.data || []).map((event) => ({ ...event, etiqueta: null })));
+      }
+    } else if (result.error && isMissingColumn(result.error, 'imagen_url')) {
+      setEventMetadataUnavailable(true);
       const legacyResult = await driveRoutesSupabase
         .from('fechas_importantes')
         .select('id, fecha, hora, actividad, year')
@@ -78,14 +117,14 @@ export default function FechasImportantesSection({
         setLoadError('No pudimos cargar el calendario. Revisa tu conexión e inténtalo otra vez.');
         setEvents([]);
       } else {
-        setEvents((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null })));
+        setEvents((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null, etiqueta: null })));
       }
     } else if (result.error) {
       console.error('Error loading school calendar:', result.error);
       setLoadError('No pudimos cargar el calendario. Revisa tu conexión e inténtalo otra vez.');
       setEvents([]);
     } else {
-      setImageSchemaUnavailable(false);
+      setEventMetadataUnavailable(false);
       setEvents(result.data || []);
     }
     setLoading(false);
@@ -182,9 +221,9 @@ export default function FechasImportantesSection({
           </div>
         </section>
 
-        {imageSchemaUnavailable && (
+        {eventMetadataUnavailable && (
           <p role="status" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            Mostrando actividades sin fotos. Ejecuta la migración de imágenes del calendario en Supabase para activar las miniaturas.
+            Algunas etiquetas o fotos pueden no estar disponibles. Ejecuta las migraciones pendientes del calendario en Supabase para habilitarlas.
           </p>
         )}
 
@@ -334,6 +373,9 @@ export default function FechasImportantesSection({
                         className="mb-3 h-36 w-full rounded-xl object-cover"
                       />
                     )}
+                    <p className="mb-2 inline-flex rounded-full bg-amber-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#805900]">
+                      {getEventLabel(event)}
+                    </p>
                     <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-[#1689a5]">
                       <span className="h-2 w-2 rounded-full bg-[#f2c500]" />
                       Actividad escolar
