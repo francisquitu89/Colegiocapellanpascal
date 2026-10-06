@@ -1,374 +1,330 @@
-import { useState, useEffect } from 'react';
-import { Calendar, Plus, Trash2, Save, X, ArrowLeft } from 'lucide-react';
-import { driveRoutesSupabase, supabase } from '../lib/supabase';
+import { useCallback, useEffect, useState } from 'react';
+import { ArrowLeft, CalendarDays, Clock3, Pencil, Plus, Save, Trash2, X } from 'lucide-react';
+import { driveRoutesSupabase } from '../lib/supabase';
 
-interface Fecha {
-  id?: number;
+interface SchoolEvent {
+  id: number;
+  fecha: string;
+  hora: string | null;
+  actividad: string;
+  year: number;
+}
+
+interface EventForm {
   fecha: string;
   hora: string;
   actividad: string;
-  year: number;
 }
 
 interface FechasImportantesManagementProps {
   onBack: () => void;
 }
 
-export default function FechasImportantesManagement({ onBack }: FechasImportantesManagementProps) {
-  const [fechas, setFechas] = useState<Fecha[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [editingFecha, setEditingFecha] = useState<Fecha>({
-    fecha: '',
-    hora: '',
-    actividad: '',
-    year: new Date().getFullYear()
-  });
-  const [isEditing, setIsEditing] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [availableYears, setAvailableYears] = useState<number[]>([]);
+const EMPTY_FORM: EventForm = { fecha: '', hora: '', actividad: '' };
 
-  useEffect(() => {
-    fetchFechas();
-    fetchAvailableYears();
+const formatFecha = (fecha: string) =>
+  new Date(`${fecha}T12:00:00`).toLocaleDateString('es-CL', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+
+export default function FechasImportantesManagement({ onBack }: FechasImportantesManagementProps) {
+  const currentYear = new Date().getFullYear();
+  const [fechas, setFechas] = useState<SchoolEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState<EventForm>(EMPTY_FORM);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [availableYears, setAvailableYears] = useState<number[]>([currentYear]);
+  const [message, setMessage] = useState('');
+  const [loadError, setLoadError] = useState('');
+
+  const fetchFechas = useCallback(async () => {
+    setLoading(true);
+    setLoadError('');
+    const { data, error } = await driveRoutesSupabase
+      .from('fechas_importantes')
+      .select('id, fecha, hora, actividad, year')
+      .eq('year', selectedYear)
+      .order('fecha', { ascending: true })
+      .order('hora', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching school calendar:', error);
+      setLoadError('No se pudieron cargar las actividades. Revisa la conexión con Supabase e inténtalo otra vez.');
+      setFechas([]);
+    } else {
+      setFechas(data || []);
+    }
+    setLoading(false);
   }, [selectedYear]);
 
-  const fetchAvailableYears = async () => {
-    try {
-      const { data, error } = await driveRoutesSupabase
-        .from('fechas_importantes')
-        .select('year');
+  const fetchAvailableYears = useCallback(async () => {
+    const { data, error } = await driveRoutesSupabase
+      .from('fechas_importantes')
+      .select('year')
+      .order('year', { ascending: false });
 
-      if (error) throw error;
-
-      const years = [...new Set(data?.map((item: { year: number }) => item.year) || [])].sort((a, b) => b - a);
-      setAvailableYears(years);
-    } catch (error) {
-      console.error('Error fetching years:', error);
+    if (error) {
+      console.error('Error fetching calendar years:', error);
+      return;
     }
-  };
+    setAvailableYears([...new Set([currentYear, ...(data || []).map((item) => item.year)])].sort((a, b) => b - a));
+  }, [currentYear]);
 
-  const fetchFechas = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await driveRoutesSupabase
-        .from('fechas_importantes')
-        .select('*')
-        .eq('year', selectedYear)
-        .order('fecha', { ascending: true });
+  useEffect(() => {
+    void fetchFechas();
+  }, [fetchFechas]);
 
-      if (error) throw error;
-      setFechas(data || []);
-    } catch (error) {
-      console.error('Error fetching fechas:', error);
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    void fetchAvailableYears();
+  }, [fetchAvailableYears]);
+
+  const resetForm = () => {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
   };
 
   const handleSave = async () => {
-    try {
-      if (!editingFecha.fecha || !editingFecha.actividad) {
-        alert('Por favor completa los campos obligatorios (Fecha y Actividad)');
-        return;
-      }
-
-      if (editingFecha.id) {
-        // Update existing
-        const { error } = await driveRoutesSupabase
-          .from('fechas_importantes')
-          .upsert({
-            fecha: editingFecha.fecha,
-            hora: editingFecha.hora || null,
-            actividad: editingFecha.actividad,
-            year: editingFecha.year
-          })
-          .eq('id', editingFecha.id);
-
-        if (error) throw error;
-      } else {
-        // Insert new
-        const { error } = await driveRoutesSupabase
-          .from('fechas_importantes')
-          .insert({
-            fecha: editingFecha.fecha,
-            hora: editingFecha.hora || null,
-            actividad: editingFecha.actividad,
-            year: editingFecha.year
-          });
-
-        if (error) throw error;
-      }
-
-      setIsEditing(false);
-      setEditingFecha({
-        fecha: '',
-        hora: '',
-        actividad: '',
-        year: selectedYear
-      });
-      fetchFechas();
-      fetchAvailableYears();
-      alert('Fecha guardada exitosamente');
-    } catch (error) {
-      console.error('Error saving fecha:', error);
-      alert('Error al guardar la fecha');
+    if (!form.fecha || !form.actividad.trim()) {
+      setMessage('Completa la fecha y el nombre de la actividad.');
+      return;
     }
-  };
 
-  const handleEdit = (fecha: Fecha) => {
-    setEditingFecha(fecha);
-    setIsEditing(true);
-  };
+    setSaving(true);
+    setMessage('');
+    const year = Number(form.fecha.slice(0, 4));
+    const payload = {
+      fecha: form.fecha,
+      hora: form.hora.trim() || null,
+      actividad: form.actividad.trim(),
+      year,
+    };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de eliminar esta fecha?')) return;
+    const result = editingId === null
+      ? await driveRoutesSupabase.from('fechas_importantes').insert(payload)
+      : await driveRoutesSupabase.from('fechas_importantes').update(payload).eq('id', editingId);
 
-    try {
-      const { error } = await driveRoutesSupabase
-        .from('fechas_importantes')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      fetchFechas();
-      fetchAvailableYears();
-      alert('Fecha eliminada exitosamente');
-    } catch (error) {
-      console.error('Error deleting fecha:', error);
-      alert('Error al eliminar la fecha');
+    if (result.error) {
+      console.error('Error saving school calendar event:', result.error);
+      setMessage('No se pudo guardar la actividad. Revisa la conexión y vuelve a intentarlo.');
+      setSaving(false);
+      return;
     }
+
+    setMessage(editingId === null ? 'Actividad agregada al calendario.' : 'Actividad actualizada correctamente.');
+    resetForm();
+    if (year !== selectedYear) setSelectedYear(year);
+    else await fetchFechas();
+    await fetchAvailableYears();
+    setSaving(false);
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditingFecha({
-      fecha: '',
-      hora: '',
-      actividad: '',
-      year: selectedYear
+  const handleEdit = (event: SchoolEvent) => {
+    setEditingId(event.id);
+    setForm({
+      fecha: event.fecha,
+      hora: event.hora || '',
+      actividad: event.actividad,
     });
+    setMessage('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const formatFecha = (fecha: string) => {
-    const date = new Date(fecha + 'T00:00:00');
-    return date.toLocaleDateString('es-CL', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+  const handleDelete = async (event: SchoolEvent) => {
+    if (!window.confirm(`¿Eliminar "${event.actividad}" del calendario?`)) return;
+    setMessage('');
+
+    const { error } = await driveRoutesSupabase
+      .from('fechas_importantes')
+      .delete()
+      .eq('id', event.id);
+
+    if (error) {
+      console.error('Error deleting school calendar event:', error);
+      setMessage('No se pudo eliminar la actividad. Inténtalo nuevamente.');
+      return;
+    }
+
+    setMessage('Actividad eliminada del calendario.');
+    if (editingId === event.id) resetForm();
+    await fetchFechas();
+    await fetchAvailableYears();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Back Button */}
+    <main className="min-h-screen bg-[#f4f7fb] px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-6xl">
         <button
+          type="button"
           onClick={onBack}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6 transition-colors"
+          className="mb-6 inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-[#164677] transition hover:bg-white"
         >
-          <ArrowLeft className="h-5 w-5" />
-          <span>Volver al Panel</span>
+          <ArrowLeft className="h-4 w-4" />
+          Volver al panel
         </button>
 
-        {/* Header */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl">
-              <Calendar className="h-8 w-8 text-white" />
+        <section className="mb-7 rounded-3xl bg-gradient-to-r from-[#063b70] to-[#1689a5] p-6 text-white shadow-lg sm:p-8">
+          <div className="flex items-center gap-4">
+            <div className="rounded-2xl bg-white/15 p-3 text-[#f2c500]">
+              <CalendarDays className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Gestión de Fechas Importantes</h1>
-              <p className="text-gray-600">Administra el calendario de actividades</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-100">Portal de gestión escolar</p>
+              <h1 className="mt-1 text-2xl font-bold sm:text-3xl">Calendario del colegio</h1>
+              <p className="mt-1 text-sm text-sky-100">Publica y administra las actividades de la comunidad Pascal.</p>
             </div>
           </div>
+        </section>
 
-          {/* Year Selector */}
-          <div className="flex items-center gap-4 mt-4">
-            <label className="text-gray-700 font-medium">Ver año:</label>
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-            >
-              {availableYears.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-              {!availableYears.includes(new Date().getFullYear()) && (
-                <option value={new Date().getFullYear()}>
-                  {new Date().getFullYear()}
-                </option>
+        <div className="grid gap-6 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.5fr)]">
+          <section className="h-fit rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-5 flex items-center gap-3">
+              <span className="rounded-xl bg-amber-50 p-2 text-amber-600"><Plus className="h-5 w-5" /></span>
+              <div>
+                <h2 className="font-bold text-[#123c66]">{editingId === null ? 'Nueva actividad' : 'Editar actividad'}</h2>
+                <p className="text-xs text-slate-500">Completa los datos para el calendario público</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="calendar-date" className="mb-1.5 block text-sm font-semibold text-slate-700">Fecha *</label>
+                <input
+                  id="calendar-date"
+                  type="date"
+                  required
+                  value={form.fecha}
+                  onChange={(event) => setForm({ ...form, fecha: event.target.value })}
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                />
+              </div>
+              <div>
+                <label htmlFor="calendar-time" className="mb-1.5 block text-sm font-semibold text-slate-700">Hora <span className="font-normal text-slate-400">(opcional)</span></label>
+                <input
+                  id="calendar-time"
+                  type="text"
+                  value={form.hora}
+                  onChange={(event) => setForm({ ...form, hora: event.target.value })}
+                  placeholder="Ej.: 19:00 hrs"
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                />
+              </div>
+              <div>
+                <label htmlFor="calendar-activity" className="mb-1.5 block text-sm font-semibold text-slate-700">Actividad *</label>
+                <textarea
+                  id="calendar-activity"
+                  required
+                  rows={4}
+                  value={form.actividad}
+                  onChange={(event) => setForm({ ...form, actividad: event.target.value })}
+                  placeholder="Describe la actividad para las familias y estudiantes"
+                  className="w-full resize-y rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+                />
+              </div>
+              {message && (
+                <p role="status" className={`rounded-xl px-3 py-2 text-sm ${message.startsWith('No se pudo') || message.startsWith('Completa') ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                  {message}
+                </p>
               )}
-            </select>
-          </div>
-        </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => void handleSave()}
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#0b568d] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#063b70] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Save className="h-4 w-4" />
+                  {saving ? 'Guardando...' : editingId === null ? 'Agregar actividad' : 'Guardar cambios'}
+                </button>
+                {editingId !== null && (
+                  <button
+                    type="button"
+                    onClick={resetForm}
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                  >
+                    <X className="h-4 w-4" />
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
 
-        {/* Add/Edit Form */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
-            {isEditing ? 'Editar Fecha' : 'Agregar Nueva Fecha'}
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            {/* Year */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Año *
+          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Eventos publicados</p>
+                <h2 className="mt-1 text-xl font-bold text-[#123c66]">{fechas.length} actividades</h2>
+              </div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-600">
+                Año
+                <select
+                  value={selectedYear}
+                  onChange={(event) => setSelectedYear(Number(event.target.value))}
+                  className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#123c66] outline-none focus:border-sky-500"
+                >
+                  {availableYears.map((year) => <option key={year} value={year}>{year}</option>)}
+                </select>
               </label>
-              <input
-                type="number"
-                value={editingFecha.year}
-                onChange={(e) => setEditingFecha({ ...editingFecha, year: Number(e.target.value) })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                min="2024"
-                max="2030"
-              />
             </div>
 
-            {/* Fecha */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Fecha *
-              </label>
-              <input
-                type="date"
-                value={editingFecha.fecha}
-                onChange={(e) => setEditingFecha({ ...editingFecha, fecha: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Hora */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hora (opcional)
-              </label>
-              <input
-                type="text"
-                value={editingFecha.hora}
-                onChange={(e) => setEditingFecha({ ...editingFecha, hora: e.target.value })}
-                placeholder="Ej: 19:00 hrs"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-
-          {/* Actividad */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Actividad *
-            </label>
-            <textarea
-              value={editingFecha.actividad}
-              onChange={(e) => setEditingFecha({ ...editingFecha, actividad: e.target.value })}
-              placeholder="Descripción de la actividad o evento"
-              rows={3}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-            />
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-3">
-            <button
-              onClick={handleSave}
-              className="flex items-center gap-2 px-6 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
-            >
-              <Save className="h-5 w-5" />
-              <span>{isEditing ? 'Actualizar' : 'Guardar'}</span>
-            </button>
-            {isEditing && (
-              <button
-                onClick={handleCancel}
-                className="flex items-center gap-2 px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                <X className="h-5 w-5" />
-                <span>Cancelar</span>
-              </button>
+            {loading ? (
+              <div className="flex items-center justify-center gap-3 py-12 text-sm text-slate-500">
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-sky-600 border-t-transparent" />
+                Cargando actividades...
+              </div>
+            ) : loadError ? (
+              <div className="rounded-2xl bg-red-50 p-4 text-sm text-red-700">
+                <p>{loadError}</p>
+                <button type="button" onClick={() => void fetchFechas()} className="mt-2 font-semibold underline">Reintentar</button>
+              </div>
+            ) : fechas.length === 0 ? (
+              <div className="rounded-2xl bg-slate-50 px-4 py-10 text-center">
+                <CalendarDays className="mx-auto h-9 w-9 text-slate-300" />
+                <p className="mt-3 font-semibold text-slate-600">Todavía no hay actividades para {selectedYear}</p>
+                <p className="mt-1 text-sm text-slate-400">Agrega la primera desde el formulario.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {fechas.map((event) => (
+                  <article key={event.id} className="flex flex-col gap-3 rounded-2xl border border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <div className="shrink-0 rounded-xl bg-sky-50 px-3 py-2 text-center text-xs font-bold capitalize text-[#0b568d]">
+                        {formatFecha(event.fecha)}
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-semibold leading-relaxed text-[#123c66]">{event.actividad}</h3>
+                        {event.hora && <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-slate-500"><Clock3 className="h-3.5 w-3.5" />{event.hora}</p>}
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 gap-2 sm:pl-3">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(event)}
+                        aria-label={`Editar ${event.actividad}`}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-sky-100 px-3 py-2 text-xs font-semibold text-[#0b568d] transition hover:bg-sky-50"
+                      >
+                        <Pencil className="h-3.5 w-3.5" /> Editar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void handleDelete(event)}
+                        aria-label={`Eliminar ${event.actividad}`}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-red-100 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> Eliminar
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
             )}
-          </div>
-
-          <p className="text-sm text-gray-600 mt-4">
-            * Campos obligatorios
-          </p>
-        </div>
-
-        {/* List */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
-            Fechas de {selectedYear} ({fechas.length})
-          </h2>
-
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
-            </div>
-          ) : fechas.length === 0 ? (
-            <div className="text-center py-8">
-              <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No hay fechas registradas para {selectedYear}</p>
-              <p className="text-sm text-gray-500 mt-2">Agrega la primera fecha usando el formulario arriba</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Fecha</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Hora</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actividad</th>
-                    <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {fechas.map((fecha) => (
-                    <tr key={fecha.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-800">
-                        {formatFecha(fecha.fecha)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
-                        {fecha.hora || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-800">
-                        {fecha.actividad}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => handleEdit(fecha)}
-                            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                          >
-                            Editar
-                          </button>
-                          <button
-                            onClick={() => handleDelete(fecha.id!)}
-                            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors flex items-center gap-1"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            <span>Eliminar</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        {/* Instructions */}
-        <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-amber-900 mb-3">Instrucciones</h3>
-          <ol className="text-amber-800 space-y-2 list-decimal list-inside">
-            <li>Completa los campos del formulario (Año, Fecha y Actividad son obligatorios)</li>
-            <li>La hora es opcional - déjala vacía si el evento es todo el día</li>
-            <li>Para períodos (ej: "del 20 al 25"), inclúyelo en la descripción de la actividad</li>
-            <li>Puedes editar o eliminar fechas existentes usando los botones en la tabla</li>
-            <li>Las fechas se ordenan automáticamente por fecha en la vista pública</li>
-          </ol>
+          </section>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

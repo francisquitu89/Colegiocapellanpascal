@@ -249,6 +249,14 @@ function App() {
   }, []);
 
   const handlePageChange = (page: string) => {
+    if (page === 'fechas-importantes' && currentPage === 'home') {
+      const calendarSection = document.getElementById('school-calendar');
+      if (calendarSection) {
+        calendarSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
+
     if (page === 'casino') {
       setShowCasinoModal(true);
     } else {
@@ -640,7 +648,7 @@ function App() {
 
 
       {/* Accesos rápidos flotantes para la comunidad escolar */}
-      <QuickAccessWheel />
+      <QuickAccessWheel onNavigate={handlePageChange} />
 
       {/* Mensaje de Rectoría */}
       <RectoriaSection cinematic />
@@ -655,6 +663,9 @@ function App() {
 
       {/* News Section */}
       <NewsSection />
+
+      {/* Calendario escolar autogestionable */}
+      <FechasImportantesSection embedded />
 
       {/* Editorial Section removed */}
 

@@ -1,5 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { ExternalLink, X } from 'lucide-react';
+import { CalendarDays, ExternalLink, X } from 'lucide-react';
+
+interface QuickAccessWheelProps {
+  onNavigate: (page: string) => void;
+}
 
 const quickLinks = [
   { label: 'SchoolNet', href: 'https://schoolnet.colegium.com/webapp/es_CL/login' },
@@ -11,8 +15,9 @@ const quickLinks = [
   { label: 'Certificación Cambridge', href: 'https://colegiocapellanpascal.cl/departamento-de-ingles-formacion-para-un-mundo-global/' },
 ];
 
-const QuickAccessWheel: React.FC = () => {
+const QuickAccessWheel: React.FC<QuickAccessWheelProps> = ({ onNavigate }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isHintVisible, setIsHintVisible] = useState(true);
   const [position, setPosition] = useState(56);
   const dragStart = useRef<{ y: number; position: number } | null>(null);
   const wasDragged = useRef(false);
@@ -69,14 +74,25 @@ const QuickAccessWheel: React.FC = () => {
               <span className="absolute bottom-3 left-1/2 h-3 w-6 -translate-x-1/2 rounded-b-full border-b-2 border-[#003b71]" />
             </span>
           )}
-          {!isOpen && (
-            <span className="absolute right-[calc(100%+0.75rem)] top-1/2 w-56 -translate-y-1/2 rounded-2xl rounded-br-sm bg-white px-5 py-3 text-center text-sm font-bold text-[#003b71] shadow-[0_8px_24px_rgba(0,59,113,0.22)] ring-2 ring-[#f2c500] after:absolute after:right-[-9px] after:top-1/2 after:-translate-y-1/2 after:border-y-[9px] after:border-l-[9px] after:border-y-transparent after:border-l-white">
-              ¿En qué te puedo ayudar?
-            </span>
-          )}
         </button>
 
-        <div className={`absolute right-0 top-28 w-80 rounded-3xl border-2 border-[#f2c500] bg-white/95 p-5 shadow-2xl backdrop-blur-sm transition-all duration-300 ${
+        {!isOpen && isHintVisible && (
+          <div className="absolute right-[calc(100%+0.75rem)] top-1/2 -translate-y-1/2">
+            <div className="relative w-36 rounded-2xl rounded-br-sm bg-white px-3 py-2 text-center text-[10px] font-bold text-[#003b71] shadow-[0_8px_24px_rgba(0,59,113,0.22)] ring-2 ring-[#f2c500] after:absolute after:right-[-9px] after:top-1/2 after:-translate-y-1/2 after:border-y-[9px] after:border-l-[9px] after:border-y-transparent after:border-l-white sm:w-56 sm:px-5 sm:py-3 sm:text-sm">
+              ¿En qué te puedo ayudar?
+              <button
+                type="button"
+                onClick={() => setIsHintVisible(false)}
+                className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#003b71] text-white shadow hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-[#f2c500]"
+                aria-label="Ocultar mensaje de ayuda"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className={`absolute right-0 top-24 max-h-[70vh] w-[min(20rem,calc(100vw-2rem))] overflow-y-auto rounded-3xl border-2 border-[#f2c500] bg-white/95 p-4 shadow-2xl backdrop-blur-sm transition-all duration-300 sm:top-28 sm:p-5 ${
           isOpen ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-4 opacity-0'
         }`}>
           <div className="mb-3 flex items-center justify-between border-b border-[#003b71]/10 pb-2">
@@ -84,6 +100,17 @@ const QuickAccessWheel: React.FC = () => {
             <span className="text-[10px] text-slate-500">Elige una opción</span>
           </div>
           <div className="grid gap-1.5">
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                onNavigate('fechas-importantes');
+              }}
+              className="flex items-center justify-between rounded-lg bg-[#f2c500] px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wide text-[#003b71] transition-colors hover:bg-amber-300"
+            >
+              Calendario Escolar
+              <CalendarDays className="h-4 w-4 shrink-0" />
+            </button>
             {quickLinks.map((link) => (
               <a
                 key={link.label}

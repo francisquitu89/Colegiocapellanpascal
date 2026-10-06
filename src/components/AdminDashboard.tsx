@@ -37,6 +37,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, onLogout })
       enabled: true
     },
     {
+      id: 'fechas-importantes-management',
+      title: 'Calendario Escolar',
+      description: 'Administra fechas, actividades y encuentros de la comunidad Pascal.',
+      icon: <CalendarDays className="w-8 h-8" />,
+      color: 'from-amber-500 to-orange-600',
+      iconBg: 'bg-amber-100 text-amber-700',
+      enabled: true
+    },
+    {
       id: 'directorio-fundacion-management',
       title: 'Fundación Educacional',
       description: 'Herramientas para la gestión de la fundación.',
