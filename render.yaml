@@ -1,9 +1,14 @@
 services:
   - type: web
-    name: ssccmanquehue
-    env: static
-    buildCommand: npm install ; npm run build
-    staticPublishPath: dist
+    name: colegio-capellan-pascal
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_DRIVE_ROUTES_SUPABASE_URL
+        sync: false
+      - key: VITE_DRIVE_ROUTES_SUPABASE_PUBLISHABLE_KEY
+        sync: false
     routes:
       - type: rewrite
         source: /*
