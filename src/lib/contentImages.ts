@@ -31,20 +31,15 @@ export async function fetchContentImages(contentId: string): Promise<ContentImag
   }
 }
 
-export async function saveContentImage(image: Partial<ContentImage>): Promise<ContentImage | null> {
-  try {
-    const { data, error } = await supabase
-      .from('content_images')
-      .insert([image])
-      .select()
-      .single()
+export async function saveContentImage(image: Partial<ContentImage>): Promise<ContentImage> {
+  const { data, error } = await supabase
+    .from('content_images')
+    .insert([image])
+    .select()
+    .single()
 
-    if (error) throw error
-    return data
-  } catch (error) {
-    console.error('Error saving content image:', error)
-    return null
-  }
+  if (error) throw error
+  return data
 }
 
 export async function updateContentImage(

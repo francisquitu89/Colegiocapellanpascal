@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Upload, Trash2, Star, StarOff, AlignLeft, AlignCenter, AlignRight, MoveUp, MoveDown, Edit2, Save, X } from 'lucide-react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Upload, Trash2, Star, StarOff, MoveUp, MoveDown, Edit2, Save, X } from 'lucide-react'
 import type { ContentImage } from '../lib/contentImages'
 import { getNewsImagePathFromUrl, removeNewsImages, uploadNewsImage } from '../lib/newsImagesStorage'
 import { 
@@ -11,17 +11,32 @@ import {
 } from '../lib/contentImages'
 
 interface AdvancedImageManagerProps {
-  contentId: string
+  contentId: string | null
   contentType: 'news' | 'editorial'
   onImagesChange?: () => void
 }
 
-export default function AdvancedImageManager({
+interface PendingImage {
+  id: string
+  file: File
+  previewUrl: string
+  alt_text: string
+  alignment: 'left' | 'right' | 'center'
+  position_in_content: number
+}
+
+export interface AdvancedImageManagerHandle {
+  savePendingImages: (contentId: string) => Promise<void>
+}
+
+const AdvancedImageManager = forwardRef<AdvancedImageManagerHandle, AdvancedImageManagerProps>(function AdvancedImageManager({
   contentId,
   contentType,
   onImagesChange
-}: AdvancedImageManagerProps) {
+}, ref) {
   const [images, setImages] = useState<ContentImage[]>([])
+  const [pendingImages, setPendingImages] = useState<PendingImage[]>([])
+  const previewUrls = useRef(new Set<string>())
   const [uploading, setUploading] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editData, setEditData] = useState({
@@ -30,27 +45,96 @@ export default function AdvancedImageManager({
     position_in_content: 1
   })
 
-  useEffect(() => {
-    if (contentId) {
-      loadImages()
-    }
+  useEffect(() => () => {
+    previewUrls.current.forEach((url) => URL.revokeObjectURL(url))
+  }, [])
+
+  const loadImages = useCallback(async (id = contentId) => {
+    if (!id) return
+    const fetchedImages = await fetchContentImages(id)
+    setImages(fetchedImages)
   }, [contentId])
 
-  const loadImages = async () => {
-    const fetchedImages = await fetchContentImages(contentId)
-    setImages(fetchedImages)
+  useEffect(() => {
+    setImages([])
+    if (contentId) void loadImages(contentId)
+  }, [contentId, loadImages])
+
+  const queueImages = (files: FileList) => {
+    const nextImages = Array.from(files)
+      .filter((file) => file.type.startsWith('image/'))
+      .map((file, index) => {
+        const previewUrl = URL.createObjectURL(file)
+        previewUrls.current.add(previewUrl)
+        return {
+          id: crypto.randomUUID(),
+          file,
+          previewUrl,
+          alt_text: '',
+          alignment: 'center' as const,
+          position_in_content: images.length + pendingImages.length + index + 1
+        }
+      })
+
+    if (nextImages.length !== files.length) {
+      alert('Se omitieron los archivos que no son imágenes.')
+    }
+    setPendingImages((previous) => [...previous, ...nextImages])
   }
+
+  const savePendingImages = useCallback(async (id: string) => {
+    if (pendingImages.length === 0) return
+
+    setUploading(true)
+    try {
+      for (const [index, image] of pendingImages.entries()) {
+        const fileExt = image.file.name.split('.').pop() || 'jpg'
+        const fileName = `content/${contentType}/${crypto.randomUUID()}.${fileExt}`
+        const { publicUrl } = await uploadNewsImage(fileName, image.file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+        await saveContentImage({
+          content_id: id,
+          content_type: contentType,
+          url: publicUrl,
+          alt_text: image.alt_text,
+          position_in_content: image.position_in_content,
+          alignment: image.alignment,
+          is_primary: images.length === 0 && index === 0
+        })
+
+        URL.revokeObjectURL(image.previewUrl)
+        previewUrls.current.delete(image.previewUrl)
+        setPendingImages((previous) => previous.filter((pending) => pending.id !== image.id))
+      }
+
+      await loadImages(id)
+      onImagesChange?.()
+    } finally {
+      setUploading(false)
+    }
+  }, [contentType, images.length, loadImages, onImagesChange, pendingImages])
+
+  useImperativeHandle(ref, () => ({ savePendingImages }), [savePendingImages])
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
 
+    if (!contentId) {
+      queueImages(files)
+      e.target.value = ''
+      return
+    }
+
     setUploading(true)
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        const fileExt = file.name.split('.').pop()
-        const fileName = `content/${contentType}/${Math.random()}.${fileExt}`
+        const fileExt = file.name.split('.').pop() || 'jpg'
+        const fileName = `content/${contentType}/${crypto.randomUUID()}.${fileExt}`
 
         const { publicUrl } = await uploadNewsImage(fileName, file, {
           cacheControl: '3600',
@@ -65,15 +149,15 @@ export default function AdvancedImageManager({
           alt_text: '',
           position_in_content: images.length + i + 1,
           alignment: 'center',
-          is_primary: images.length === 0 && i === 0 // First image is primary
+          is_primary: images.length === 0 && i === 0
         })
       }
 
-      await loadImages()
-      if (onImagesChange) onImagesChange()
+      await loadImages(contentId)
+      onImagesChange?.()
     } catch (error) {
       console.error('Error uploading images:', error)
-      alert('Error al subir las imágenes')
+      alert(`Error al subir las imágenes: ${error instanceof Error ? error.message : 'Error desconocido'}`)
     } finally {
       setUploading(false)
       e.target.value = ''
@@ -94,7 +178,7 @@ export default function AdvancedImageManager({
       // Delete from database
       await deleteContentImage(image.id)
       await loadImages()
-      if (onImagesChange) onImagesChange()
+      onImagesChange?.()
     } catch (error) {
       console.error('Error deleting image:', error)
       alert('Error al eliminar la imagen')
@@ -102,10 +186,11 @@ export default function AdvancedImageManager({
   }
 
   const handleSetPrimary = async (imageId: string) => {
+    if (!contentId) return
     const success = await setPrimaryImage(contentId, imageId)
     if (success) {
       await loadImages()
-      if (onImagesChange) onImagesChange()
+      onImagesChange?.()
     }
   }
 
@@ -119,7 +204,7 @@ export default function AdvancedImageManager({
     await updateContentImage(previousImage.id, { position_in_content: index + 1 })
     
     await loadImages()
-    if (onImagesChange) onImagesChange()
+    onImagesChange?.()
   }
 
   const handleMoveDown = async (index: number) => {
@@ -132,7 +217,7 @@ export default function AdvancedImageManager({
     await updateContentImage(nextImage.id, { position_in_content: index + 1 })
     
     await loadImages()
-    if (onImagesChange) onImagesChange()
+    onImagesChange?.()
   }
 
   const startEdit = (image: ContentImage) => {
@@ -147,10 +232,14 @@ export default function AdvancedImageManager({
   const saveEdit = async () => {
     if (!editingId) return
 
-    await updateContentImage(editingId, editData)
+    const updatedImage = await updateContentImage(editingId, editData)
+    if (!updatedImage) {
+      alert('No se pudo actualizar la imagen. Inténtalo nuevamente.')
+      return
+    }
     setEditingId(null)
     await loadImages()
-    if (onImagesChange) onImagesChange()
+    onImagesChange?.()
   }
 
   const cancelEdit = () => {
@@ -179,7 +268,8 @@ export default function AdvancedImageManager({
       </div>
 
       <p className="text-sm text-gray-600">
-        Gestiona imágenes con posicionamiento, alineación y texto alternativo
+        Agrega imágenes dentro de esta noticia, define en qué párrafo aparecen y configura su alineación y descripción.
+        {!contentId && ' Se asociarán a esta noticia al guardarla.'}
       </p>
 
       {uploading && (
@@ -190,8 +280,12 @@ export default function AdvancedImageManager({
 
       {images.length === 0 ? (
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-          <p className="text-gray-600">No hay imágenes configuradas</p>
-          <p className="text-sm text-gray-500 mt-1">Sube imágenes para empezar</p>
+          <p className="text-gray-600">
+            {pendingImages.length > 0 ? 'Imágenes listas para agregar' : 'No hay imágenes configuradas'}
+          </p>
+          <p className="text-sm text-gray-500 mt-1">
+            {contentId ? 'Sube imágenes para empezar' : 'Puedes subirlas ahora; se guardarán con la noticia'}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -228,7 +322,7 @@ export default function AdvancedImageManager({
                           <label className="text-xs text-gray-600">Alineación</label>
                           <select
                             value={editData.alignment}
-                            onChange={(e) => setEditData({ ...editData, alignment: e.target.value as any })}
+                            onChange={(e) => setEditData({ ...editData, alignment: e.target.value as PendingImage['alignment'] })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                           >
                             <option value="left">Izquierda</option>
@@ -338,6 +432,75 @@ export default function AdvancedImageManager({
         </div>
       )}
 
+      {pendingImages.length > 0 && (
+        <div className="space-y-3">
+          {pendingImages.map((image) => (
+            <div key={image.id} className="flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 sm:flex-row">
+              <img src={image.previewUrl} alt={image.alt_text || 'Vista previa'} className="h-24 w-24 rounded object-cover" />
+              <div className="grid flex-1 gap-3 sm:grid-cols-3">
+                <label className="text-xs text-gray-600 sm:col-span-3">
+                  Texto alternativo / pie de foto
+                  <input
+                    type="text"
+                    value={image.alt_text}
+                    onChange={(event) => setPendingImages((previous) => previous.map((pending) =>
+                      pending.id === image.id ? { ...pending, alt_text: event.target.value } : pending
+                    ))}
+                    placeholder="Describe la imagen..."
+                    className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                  />
+                </label>
+                <label className="text-xs text-gray-600">
+                  Alineación
+                  <select
+                    value={image.alignment}
+                    onChange={(event) => setPendingImages((previous) => previous.map((pending) =>
+                      pending.id === image.id
+                        ? { ...pending, alignment: event.target.value as PendingImage['alignment'] }
+                        : pending
+                    ))}
+                    className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                  >
+                    <option value="left">Izquierda</option>
+                    <option value="center">Centro</option>
+                    <option value="right">Derecha</option>
+                  </select>
+                </label>
+                <label className="text-xs text-gray-600">
+                  Posición en el texto
+                  <input
+                    type="number"
+                    min="1"
+                    value={image.position_in_content}
+                    onChange={(event) => setPendingImages((previous) => previous.map((pending) =>
+                      pending.id === image.id
+                        ? { ...pending, position_in_content: Math.max(1, Number(event.target.value)) }
+                        : pending
+                    ))}
+                    className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                  />
+                </label>
+                <div className="flex items-end justify-between gap-2">
+                  <span className="truncate text-xs text-gray-500">{image.file.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      URL.revokeObjectURL(image.previewUrl)
+                      previewUrls.current.delete(image.previewUrl)
+                      setPendingImages((previous) => previous.filter((pending) => pending.id !== image.id))
+                    }}
+                    className="rounded p-2 text-red-600 hover:bg-red-100"
+                    aria-label={`Quitar ${image.file.name}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
         <p className="text-sm text-blue-800">
           <strong>Funcionalidades:</strong> Posición en texto (después de qué párrafo), alineación (izquierda/centro/derecha), 
@@ -346,4 +509,6 @@ export default function AdvancedImageManager({
       </div>
     </div>
   )
-}
+})
+
+export default AdvancedImageManager

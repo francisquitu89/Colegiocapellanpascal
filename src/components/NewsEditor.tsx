@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
@@ -12,12 +12,7 @@ import {
   AlignCenter, 
   AlignRight,
   Save,
-  Plus,
   X,
-  Upload,
-  Eye,
-  Edit3,
-  Trash2,
   Link as LinkIcon,
   Unlink
 } from 'lucide-react';
@@ -25,7 +20,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { driveRoutesSupabase, NewsItem } from '../lib/supabase';
 import ImageUploader from './ImageUploader';
-import AdvancedImageManager from './AdvancedImageManager';
+import AdvancedImageManager, { AdvancedImageManagerHandle } from './AdvancedImageManager';
 
 interface NewsEditorProps {
   onClose: () => void;
@@ -39,6 +34,9 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ onClose, onSave, editingNews })
   const [images, setImages] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState('');
   const [saving, setSaving] = useState(false);
+  const [createdNewsId, setCreatedNewsId] = useState<string | null>(null);
+  const advancedImagesRef = useRef<AdvancedImageManagerHandle>(null);
+  const saveInProgressRef = useRef(false);
 
   const editor = useEditor({
     extensions: [
@@ -88,6 +86,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ onClose, onSave, editingNews })
   };
 
   useEffect(() => {
+    setCreatedNewsId(null);
     if (editingNews) {
       setTitle(editingNews.title);
       setDate(new Date(editingNews.date));
@@ -105,12 +104,16 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ onClose, onSave, editingNews })
   }, [editingNews, editor]);
 
   const handleSave = async () => {
+    if (saveInProgressRef.current) return;
+
     if (!title.trim() || !editor?.getHTML()) {
       alert('Por favor completa el título y el contenido');
       return;
     }
 
+    saveInProgressRef.current = true;
     setSaving(true);
+    let newsWasCreated = false;
     try {
       const newsData = {
         title: title.trim(),
@@ -120,29 +123,43 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ onClose, onSave, editingNews })
         video_url: videoUrl.trim() || null,
       };
 
-      console.log('Saving news data:', newsData);
-      if (editingNews) {
-        const { error } = await driveRoutesSupabase
+      const existingNewsId = editingNews?.id ?? createdNewsId;
+      let newsId = existingNewsId;
+
+      if (existingNewsId) {
+        const { data, error } = await driveRoutesSupabase
           .from('news')
-          .upsert(newsData)
-          .eq('id', editingNews.id);
+          .update(newsData)
+          .eq('id', existingNewsId)
+          .select('id')
+          .single();
         
         if (error) {
           console.error('Update error:', error);
           throw error;
         }
-        console.log('News updated successfully');
+        newsId = data.id;
       } else {
-        const { error } = await driveRoutesSupabase
+        const { data, error } = await driveRoutesSupabase
           .from('news')
-          .insert([newsData]);
+          .insert([newsData])
+          .select('id')
+          .single();
         
         if (error) {
           console.error('Insert error:', error);
           throw error;
         }
-        console.log('News created successfully');
+        newsId = data.id;
+        setCreatedNewsId(newsId);
+        newsWasCreated = true;
       }
+
+      if (!newsId) {
+        throw new Error('No se recibió el identificador de la noticia guardada.');
+      }
+
+      await advancedImagesRef.current?.savePendingImages(newsId);
 
       if (onSave) {
         onSave();
@@ -151,8 +168,14 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ onClose, onSave, editingNews })
       }
     } catch (error) {
       console.error('Error saving news:', error);
-      alert(`Error al guardar la noticia: ${error.message || 'Error desconocido'}`);
+      const detail = error instanceof Error ? error.message : 'Error desconocido';
+      alert(
+        createdNewsId || newsWasCreated
+          ? `La noticia ya está creada, pero no se pudieron guardar todos los cambios o imágenes. Inténtalo nuevamente: ${detail}`
+          : `Error al guardar la noticia: ${detail}`
+      );
     } finally {
+      saveInProgressRef.current = false;
       setSaving(false);
     }
   };
@@ -207,25 +230,28 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ onClose, onSave, editingNews })
           </div>
 
           {/* Images */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Imágenes Simples (Carrusel)
-            </label>
-            <ImageUploader
-              images={images}
-              onImagesChange={setImages}
-            />
-          </div>
-
-          {/* Advanced Images - Only for existing news */}
-          {editingNews && (
+          <div className="space-y-6">
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Imágenes simples (carrusel)
+              </label>
+              <ImageUploader
+                images={images}
+                onImagesChange={setImages}
+              />
+            </div>
+
+            <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-4">
+              <h3 className="mb-3 text-sm font-semibold text-gray-800">
+                Imágenes dentro de la noticia
+              </h3>
               <AdvancedImageManager
-                contentId={editingNews.id}
+                ref={advancedImagesRef}
+                contentId={editingNews?.id ?? createdNewsId}
                 contentType="news"
               />
             </div>
-          )}
+          </div>
 
           {/* Video URL */}
           <div>
@@ -343,7 +369,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({ onClose, onSave, editingNews })
             className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2 transition-colors"
           >
             <Save className="w-4 h-4" />
-            <span>{saving ? 'Guardando...' : 'Guardar'}</span>
+            <span>{saving ? 'Guardando noticia e imágenes...' : 'Guardar'}</span>
           </button>
         </div>
       </div>
