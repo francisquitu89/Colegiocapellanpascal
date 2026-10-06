@@ -8,19 +8,26 @@ interface SchoolEvent {
   hora: string | null;
   actividad: string;
   year: number;
+  imagen_url: string | null;
 }
 
 interface EventForm {
   fecha: string;
   hora: string;
   actividad: string;
+  imagen_url: string;
 }
 
 interface FechasImportantesManagementProps {
   onBack: () => void;
 }
 
-const EMPTY_FORM: EventForm = { fecha: '', hora: '', actividad: '' };
+const EMPTY_FORM: EventForm = {
+  fecha: '',
+  hora: '',
+  actividad: '',
+  imagen_url: '',
+};
 
 const formatFecha = (fecha: string) =>
   new Date(`${fecha}T12:00:00`).toLocaleDateString('es-CL', {
@@ -28,6 +35,19 @@ const formatFecha = (fecha: string) =>
     day: 'numeric',
     month: 'short',
   });
+
+function isMissingImageColumn(error: { code?: string; message?: string }) {
+  return error.code === '42703' || error.message?.includes('imagen_url');
+}
+
+function isValidPostimageUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && (url.hostname === 'i.postimg.cc' || url.hostname === 'postimg.cc');
+  } catch {
+    return false;
+  }
+}
 
 export default function FechasImportantesManagement({ onBack }: FechasImportantesManagementProps) {
   const currentYear = new Date().getFullYear();
@@ -40,23 +60,41 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
   const [availableYears, setAvailableYears] = useState<number[]>([currentYear]);
   const [message, setMessage] = useState('');
   const [loadError, setLoadError] = useState('');
+  const [supportsEventImages, setSupportsEventImages] = useState(true);
 
   const fetchFechas = useCallback(async () => {
     setLoading(true);
     setLoadError('');
-    const { data, error } = await driveRoutesSupabase
+    const result = await driveRoutesSupabase
       .from('fechas_importantes')
-      .select('id, fecha, hora, actividad, year')
+      .select('id, fecha, hora, actividad, year, imagen_url')
       .eq('year', selectedYear)
       .order('fecha', { ascending: true })
       .order('hora', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching school calendar:', error);
+    if (result.error && isMissingImageColumn(result.error)) {
+      setSupportsEventImages(false);
+      const legacyResult = await driveRoutesSupabase
+        .from('fechas_importantes')
+        .select('id, fecha, hora, actividad, year')
+        .eq('year', selectedYear)
+        .order('fecha', { ascending: true })
+        .order('hora', { ascending: true });
+
+      if (legacyResult.error) {
+        console.error('Error fetching school calendar:', legacyResult.error);
+        setLoadError('No se pudieron cargar las actividades. Revisa la conexión con Supabase e inténtalo otra vez.');
+        setFechas([]);
+      } else {
+        setFechas((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null })));
+      }
+    } else if (result.error) {
+      console.error('Error fetching school calendar:', result.error);
       setLoadError('No se pudieron cargar las actividades. Revisa la conexión con Supabase e inténtalo otra vez.');
       setFechas([]);
     } else {
-      setFechas(data || []);
+      setSupportsEventImages(true);
+      setFechas(result.data || []);
     }
     setLoading(false);
   }, [selectedYear]);
@@ -92,6 +130,10 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
       setMessage('Completa la fecha y el nombre de la actividad.');
       return;
     }
+    if (form.imagen_url.trim() && !isValidPostimageUrl(form.imagen_url.trim())) {
+      setMessage('Usa un enlace HTTPS directo de i.postimg.cc para la foto.');
+      return;
+    }
 
     setSaving(true);
     setMessage('');
@@ -101,8 +143,8 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
       hora: form.hora.trim() || null,
       actividad: form.actividad.trim(),
       year,
+      ...(supportsEventImages ? { imagen_url: form.imagen_url.trim() || null } : {}),
     };
-
     const result = editingId === null
       ? await driveRoutesSupabase.from('fechas_importantes').insert(payload)
       : await driveRoutesSupabase.from('fechas_importantes').update(payload).eq('id', editingId);
@@ -128,6 +170,7 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
       fecha: event.fecha,
       hora: event.hora || '',
       actividad: event.actividad,
+      imagen_url: event.imagen_url,
     });
     setMessage('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -179,6 +222,12 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
           </div>
         </section>
 
+        {!supportsEventImages && (
+          <p role="status" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            El calendario carga en modo compatible, pero para guardar y mostrar fotos debes ejecutar la migración SQL de imágenes en Supabase.
+          </p>
+        )}
+
         <div className="grid gap-6 lg:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.5fr)]">
           <section className="h-fit rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <div className="mb-5 flex items-center gap-3">
@@ -224,8 +273,25 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
                   className="w-full resize-y rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
                 />
               </div>
+              <div>
+                <label htmlFor="calendar-event-image" className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  Enlace directo de foto <span className="font-normal text-slate-400">(opcional)</span>
+                </label>
+                <input
+                  id="calendar-event-image"
+                  type="url"
+                  value={form.imagen_url}
+                  disabled={!supportsEventImages}
+                  onChange={(event) => setForm({ ...form, imagen_url: event.target.value })}
+                  placeholder="https://i.postimg.cc/.../foto.jpg"
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+                />
+                {form.imagen_url && (
+                  <img src={form.imagen_url} alt="Vista previa de la foto" className="mt-3 h-24 w-36 rounded-xl object-cover" />
+                )}
+              </div>
               {message && (
-                <p role="status" className={`rounded-xl px-3 py-2 text-sm ${message.startsWith('No se pudo') || message.startsWith('Completa') ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                <p role="status" className={`rounded-xl px-3 py-2 text-sm ${message.startsWith('No se pudo') || message.startsWith('Completa') || message.startsWith('Usa') ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
                   {message}
                 </p>
               )}
@@ -292,6 +358,9 @@ export default function FechasImportantesManagement({ onBack }: FechasImportante
                 {fechas.map((event) => (
                   <article key={event.id} className="flex flex-col gap-3 rounded-2xl border border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex min-w-0 items-start gap-3">
+                      {event.imagen_url && (
+                        <img src={event.imagen_url} alt="" className="h-14 w-16 shrink-0 rounded-lg object-cover" />
+                      )}
                       <div className="shrink-0 rounded-xl bg-sky-50 px-3 py-2 text-center text-xs font-bold capitalize text-[#0b568d]">
                         {formatFecha(event.fecha)}
                       </div>

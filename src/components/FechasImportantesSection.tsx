@@ -8,6 +8,7 @@ interface SchoolEvent {
   hora: string | null;
   actividad: string;
   year: number;
+  imagen_url: string | null;
 }
 
 interface FechasImportantesSectionProps {
@@ -35,6 +36,10 @@ function shiftMonth(date: Date, amount: number) {
   return new Date(date.getFullYear(), date.getMonth() + amount, 1);
 }
 
+function isMissingImageColumn(error: { code?: string; message?: string }) {
+  return error.code === '42703' || error.message?.includes('imagen_url');
+}
+
 export default function FechasImportantesSection({
   onBack,
   embedded = false,
@@ -45,25 +50,43 @@ export default function FechasImportantesSection({
   const [events, setEvents] = useState<SchoolEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+  const [imageSchemaUnavailable, setImageSchemaUnavailable] = useState(false);
 
   const loadEvents = useCallback(async () => {
     const year = viewDate.getFullYear();
     setLoading(true);
     setLoadError('');
 
-    const { data, error } = await driveRoutesSupabase
+    const result = await driveRoutesSupabase
       .from('fechas_importantes')
-      .select('id, fecha, hora, actividad, year')
+      .select('id, fecha, hora, actividad, year, imagen_url')
       .eq('year', year)
       .order('fecha', { ascending: true })
       .order('hora', { ascending: true });
 
-    if (error) {
-      console.error('Error loading school calendar:', error);
+    if (result.error && isMissingImageColumn(result.error)) {
+      setImageSchemaUnavailable(true);
+      const legacyResult = await driveRoutesSupabase
+        .from('fechas_importantes')
+        .select('id, fecha, hora, actividad, year')
+        .eq('year', year)
+        .order('fecha', { ascending: true })
+        .order('hora', { ascending: true });
+
+      if (legacyResult.error) {
+        console.error('Error loading school calendar:', legacyResult.error);
+        setLoadError('No pudimos cargar el calendario. Revisa tu conexión e inténtalo otra vez.');
+        setEvents([]);
+      } else {
+        setEvents((legacyResult.data || []).map((event) => ({ ...event, imagen_url: null })));
+      }
+    } else if (result.error) {
+      console.error('Error loading school calendar:', result.error);
       setLoadError('No pudimos cargar el calendario. Revisa tu conexión e inténtalo otra vez.');
       setEvents([]);
     } else {
-      setEvents(data || []);
+      setImageSchemaUnavailable(false);
+      setEvents(result.data || []);
     }
     setLoading(false);
   }, [viewDate]);
@@ -159,6 +182,12 @@ export default function FechasImportantesSection({
           </div>
         </section>
 
+        {imageSchemaUnavailable && (
+          <p role="status" className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            Mostrando actividades sin fotos. Ejecuta la migración de imágenes del calendario en Supabase para activar las miniaturas.
+          </p>
+        )}
+
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(18rem,0.85fr)]">
           <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-7" aria-label="Calendario mensual">
             <div className="mb-6 flex items-center justify-between gap-3">
@@ -212,6 +241,7 @@ export default function FechasImportantesSection({
 
                 const isToday = day.key === toDateKey(today);
                 const isSelected = day.key === selectedDate;
+                const thumbnailEvent = day.dayEvents.find((event) => event.imagen_url);
                 return (
                   <button
                     key={day.key}
@@ -227,15 +257,31 @@ export default function FechasImportantesSection({
                           : 'text-slate-700 hover:bg-sky-50'
                     }`}
                   >
-                    <span className="text-xs sm:text-sm">{day.dayNumber}</span>
-                    <span className="mt-1 flex min-h-2 items-center gap-0.5" aria-hidden="true">
-                      {day.dayEvents.slice(0, 3).map((event) => (
-                        <span
-                          key={event.id}
-                          className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-[#f2c500]' : 'bg-[#1689a5]'}`}
-                        />
-                      ))}
+                    <span className="flex w-full items-center justify-center gap-1">
+                      <span className="text-xs sm:text-sm">{day.dayNumber}</span>
+                      {day.dayEvents.length > 0 && (
+                        <span className={`rounded-full px-1 text-[9px] font-bold leading-4 ${isSelected ? 'bg-white/20 text-white' : 'bg-sky-100 text-[#0b568d]'}`}>
+                          {day.dayEvents.length}
+                        </span>
+                      )}
                     </span>
+                    {thumbnailEvent?.imagen_url ? (
+                      <img
+                        src={thumbnailEvent.imagen_url}
+                        alt=""
+                        loading="lazy"
+                        className="mt-1 h-6 w-8 rounded-md object-cover shadow-sm sm:h-9 sm:w-12"
+                      />
+                    ) : (
+                      <span className="mt-1 flex min-h-2 items-center gap-0.5" aria-hidden="true">
+                        {day.dayEvents.slice(0, 3).map((event) => (
+                          <span
+                            key={event.id}
+                            className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-[#f2c500]' : 'bg-[#1689a5]'}`}
+                          />
+                        ))}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -280,6 +326,14 @@ export default function FechasImportantesSection({
               <div className="space-y-3">
                 {selectedEvents.map((event) => (
                   <article key={event.id} className="rounded-2xl border border-sky-100 bg-sky-50/70 p-4">
+                    {event.imagen_url && (
+                      <img
+                        src={event.imagen_url}
+                        alt={`Imagen de ${event.actividad}`}
+                        loading="lazy"
+                        className="mb-3 h-36 w-full rounded-xl object-cover"
+                      />
+                    )}
                     <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-[#1689a5]">
                       <span className="h-2 w-2 rounded-full bg-[#f2c500]" />
                       Actividad escolar
