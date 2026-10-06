@@ -4,12 +4,36 @@ export const HOME_HERO_BUCKET = 'site-logos';
 export const HOME_HERO_FILENAME = 'site-home-hero';
 export const HOME_HERO_UPDATED_EVENT = 'site-hero-updated';
 export const HOME_HERO_DEFAULT_IMAGES = [
-  'https://i.postimg.cc/TfmjSLLf/Fotos-colegia-219.webp?dl=1',
-  'https://i.postimg.cc/fbTHTZP9/Foto-1-Alumnos-de-diferenciado-IV-Comprension-historica-del-presente-Explicacion-a-del-Combate-N.jpg',
-  'https://i.postimg.cc/dtfQ9t28/LITURGIA-DE-CENIZAS-scaled.jpg',
-  'https://i.postimg.cc/vTQ7XvdJ/Aniversario-CCP-2024-37-copia.webp'
+  'https://colegiocapellanpascal.cl/wp-content/uploads/2025/02/Fotos-colegia-219.webp',
+  'https://colegiocapellanpascal.cl/wp-content/uploads/2025/03/Foto-1_-Alumnos-de-diferenciado-IV°.-Comprension-historica-del-presente.-Explicacion-a-del-Combate-Naval-de-Iquique--scaled.jpg',
+  'https://colegiocapellanpascal.cl/wp-content/uploads/2026/04/LITURGIA-DE-CENIZAS-scaled.jpg',
+  'https://colegiocapellanpascal.cl/wp-content/uploads/2025/02/Aniversario-CCP-2024-37-copia.webp'
 ];
 const HOME_HERO_LOCAL_STORAGE_KEY = 'site-home-hero-base-images';
+
+const upgradeLegacyHeroImage = (image: string): string => {
+  const replacements: Array<[RegExp, string]> = [
+    [
+      /https?:\/\/i\.postimg\.cc\/TfmjSLLf\/Fotos-colegia-219\.webp/i,
+      HOME_HERO_DEFAULT_IMAGES[0],
+    ],
+    [
+      /https?:\/\/i\.postimg\.cc\/fbTHTZP9\/[^/?#]+/i,
+      HOME_HERO_DEFAULT_IMAGES[1],
+    ],
+    [
+      /https?:\/\/i\.postimg\.cc\/dtfQ9t28\/[^/?#]+/i,
+      HOME_HERO_DEFAULT_IMAGES[2],
+    ],
+    [
+      /https?:\/\/i\.postimg\.cc\/vTQ7XvdJ\/Aniversario-CCP-2024-37-copia(?:-1024x683)?\.webp/i,
+      HOME_HERO_DEFAULT_IMAGES[3],
+    ],
+  ];
+
+  const replacement = replacements.find(([pattern]) => pattern.test(image));
+  return replacement ? image.replace(replacement[0], replacement[1]).split(/[?#]/, 1)[0] : image;
+};
 
 interface SiteHeroSettingsRow {
   id: boolean;
@@ -21,7 +45,7 @@ const normalizeHeroImages = (images: string[]): string[] => {
   return Array.from(
     new Set(
       images
-        .map((value) => value.trim())
+        .map((value) => upgradeLegacyHeroImage(value.trim()))
         .filter(Boolean)
     )
   );

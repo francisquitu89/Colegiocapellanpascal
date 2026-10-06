@@ -72,7 +72,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
         <section ref={sectionRef} className="relative z-20 h-screen w-full overflow-hidden bg-[#001d38]">
           <div className="absolute inset-0 overflow-hidden" style={{ clipPath: 'inset(0px)' }}>
             <img
-              src="https://i.postimg.cc/9fdTnFj1/Discurso-solemne-en-el-colegio.png"
+              src="/images/Discurso-solemne-en-el-colegio.png"
               alt="Discurso solemne en el Colegio Capellán Pascal"
               className="h-full w-full object-cover object-[center_28%]"
               style={{
@@ -109,7 +109,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
             <div className={`grid items-start bg-white shadow-xl transition-all duration-1000 lg:grid-cols-[0.82fr_1.18fr] ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
               <div className="bg-[#003b71]">
                 <img
-                  src="https://i.postimg.cc/FFJCs0mq/Foto-Rector-CCP-2026-ajustada-IA-789x1024.png"
+                  src="https://colegiocapellanpascal.cl/wp-content/uploads/2026/03/Foto-Rector-CCP-2026-ajustada-IA.png"
                   alt="Ronald Baasch Barberis, rector del Colegio Capellán Pascal"
                   className="block h-auto max-h-[52rem] min-h-[28rem] w-full object-cover object-top lg:h-full"
                 />
@@ -164,7 +164,7 @@ const RectoriaSection: React.FC<RectoriaSectionProps> = ({ onBack, cinematic = f
           <div className="relative grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
             <div className="relative min-h-[34rem] overflow-hidden lg:min-h-[48rem]">
               <img
-                src="https://i.postimg.cc/FFJCs0mq/Foto-Rector-CCP-2026-ajustada-IA-789x1024.png"
+                src="https://colegiocapellanpascal.cl/wp-content/uploads/2026/03/Foto-Rector-CCP-2026-ajustada-IA.png"
                 alt="Ronald Baasch Barberis, rector del Colegio Capellán Pascal"
                 className="absolute -inset-y-10 inset-x-0 h-[calc(100%+5rem)] w-full object-cover object-center transition-transform duration-300 ease-out"
                 style={{ transform: `translateY(${parallaxOffset}px) scale(1.08)` }}
