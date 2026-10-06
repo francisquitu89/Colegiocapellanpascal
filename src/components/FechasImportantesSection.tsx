@@ -45,7 +45,8 @@ function getEventLabel(event: SchoolEvent) {
   if (event.etiqueta?.trim()) return event.etiqueta;
   return event.actividad
     .replace(/^Actividad de muestra:\s*/i, '')
-    .replace(/^Feriado nacional:\s*/i, '');
+    .replace(/^Feriado nacional:\s*/i, '')
+    .replace(/\s*\(confirmar fecha\)\s*$/i, '');
 }
 
 export default function FechasImportantesSection({
@@ -276,19 +277,20 @@ export default function FechasImportantesSection({
 
             <div className="grid grid-cols-7 gap-1 pt-2 sm:gap-2">
               {calendarDays.map((day, index) => {
-                if (!day) return <div key={`empty-${index}`} className="min-h-12 sm:min-h-20" aria-hidden="true" />;
+                if (!day) return <div key={`empty-${index}`} className="min-h-20 sm:min-h-24" aria-hidden="true" />;
 
                 const isToday = day.key === toDateKey(today);
                 const isSelected = day.key === selectedDate;
-                const thumbnailEvent = day.dayEvents.find((event) => event.imagen_url);
+                const previewEvent = day.dayEvents.find((event) => event.imagen_url) || day.dayEvents[0];
                 return (
                   <button
                     key={day.key}
                     type="button"
                     onClick={() => setSelectedDate(day.key)}
-                    aria-label={`${day.dayNumber} ${MONTH_FORMATTER.format(viewDate)}${day.dayEvents.length ? `, ${day.dayEvents.length} eventos` : ''}`}
+                    aria-label={`${day.dayNumber} ${MONTH_FORMATTER.format(viewDate)}${day.dayEvents.length ? `, ${day.dayEvents.length} eventos: ${getEventLabel(previewEvent)}` : ''}`}
+                    title={previewEvent ? getEventLabel(previewEvent) : undefined}
                     aria-pressed={isSelected}
-                    className={`flex min-h-12 flex-col items-center rounded-xl px-1 py-2 transition sm:min-h-20 sm:rounded-2xl sm:py-3 ${
+                    className={`flex min-h-20 flex-col items-center rounded-xl px-0.5 py-2 transition sm:min-h-24 sm:rounded-2xl sm:px-1 sm:py-3 ${
                       isSelected
                         ? 'bg-[#0b568d] text-white shadow-md'
                         : isToday
@@ -304,9 +306,16 @@ export default function FechasImportantesSection({
                         </span>
                       )}
                     </span>
-                    {thumbnailEvent?.imagen_url ? (
+                    {previewEvent && (
+                      <span className={`mt-1 w-full overflow-hidden text-center text-[8px] font-semibold leading-[9px] sm:text-[10px] sm:leading-3 ${
+                        isSelected ? 'text-sky-100' : 'text-[#164677]'
+                      }`} style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                        {getEventLabel(previewEvent)}
+                      </span>
+                    )}
+                    {previewEvent?.imagen_url ? (
                       <img
-                        src={thumbnailEvent.imagen_url}
+                        src={previewEvent.imagen_url}
                         alt=""
                         loading="lazy"
                         className="mt-1 h-6 w-8 rounded-md object-cover shadow-sm sm:h-9 sm:w-12"
